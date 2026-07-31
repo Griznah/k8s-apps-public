@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- resources/qbittorrent-statefulset.yaml
+- resources/qbittorrent-services.yaml
+- resources/qbittorrent-gateway-route.yaml
+- resources/qbittorrent-cm.yaml
+
+namespace: downloads
+
+images:
+- name: qbittorrent-image
+  newName: ghcr.io/home-operations/qbittorrent
+  newTag: rolling@sha256:4fcf15b7f265c2c8d7bc2a7e13240a07e0593c326f3cf3b5b9bb69eec5b79299 ***REMOVED*** https://github.com/home-operations/containers/pkgs/container/qbittorrent

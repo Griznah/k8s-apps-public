@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - resources/radarr-statefulset.yaml
+  - resources/radarr-service.yaml
+  - resources/radarr-gateway-route.yaml
+  - resources/radarr-cm.yaml
+
+namespace: starrs
+
+images:
+  - name: radarr-image
+    newName: ghcr.io/home-operations/radarr
+    newTag: rolling@sha256:c82ca292d70ac798bc993421fa7467b0c760238db646a1abc7789115d4359d5c ***REMOVED*** https://github.com/home-operations/containers/pkgs/container/radarr

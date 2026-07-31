@@ -1,0 +1,56 @@
+replicas: 1
+
+service:
+  port: 8080
+  targetPort: http
+
+***REMOVED*** VMAgent scrapes via VMServiceScrape; self-monitor disabled
+selfMonitor:
+  enabled: false
+
+***REMOVED*** Scraped by VMServiceScrape (victoria-metrics app); chart ServiceMonitor disabled
+serviceMonitor:
+  enabled: false
+
+***REMOVED*** Resource limits
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    memory: 256Mi
+
+***REMOVED*** RBAC - Kubernetes API access
+serviceAccount:
+  create: true
+  automountServiceAccountToken: true
+
+***REMOVED*** Collectors to enable
+collectors:
+  - certificatesigningrequests
+  - configmaps
+  - cronjobs
+  - daemonsets
+  - deployments
+  - endpoints
+  - horizontalpodautoscalers
+  - ingresses
+  - jobs
+  - limitranges
+  - mutatingwebhookconfigurations
+  - namespaces
+  - networkpolicies
+  - nodes
+  - persistentvolumeclaims
+  - persistentvolumes
+  - poddisruptionbudgets
+  - pods
+  - replicasets
+  - replicationcontrollers
+  - resourcequotas
+  - secrets
+  - services
+  - statefulsets
+  - storageclasses
+  - validatingwebhookconfigurations
+  - volumeattachments

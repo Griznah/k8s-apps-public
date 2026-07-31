@@ -1,0 +1,37 @@
+---
+***REMOVED*** Load Popeye spinach.yaml as configmap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: popeye
+  namespace: popeye
+data:
+  spinach: |-
+    popeye:
+      allocations:
+        cpu:
+          over: 90
+          under: 50
+        memory:
+          over: 90
+          under: 50
+      node:
+        limits:
+          cpu:    90
+          memory: 80
+      pod:
+        limits:
+          cpu:    80
+          memory: 75
+        restarts:
+          5
+***REMOVED***      excludes:
+***REMOVED***        v1/pods:
+***REMOVED***        - name: rx:.*
+***REMOVED***          codes:
+***REMOVED***            - 301
+***REMOVED***        v1/services:
+***REMOVED***        - name: rx:.*
+***REMOVED***          codes:
+***REMOVED***            - 1109
+

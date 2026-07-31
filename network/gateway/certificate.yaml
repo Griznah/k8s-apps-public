@@ -1,0 +1,16 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: example-net-tls
+  namespace: gateway
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  secretName: example-net-tls
+  commonName: "*.example.com"
+  dnsNames:
+    - "*.example.com"
+    - "*.k8s.example.com"
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer

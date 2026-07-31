@@ -1,0 +1,9 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+***REMOVED*** Consolidated Kgateway Gateway (single Envoy, single LB IP .211) + the wildcard
+***REMOVED*** Certificate that terminates TLS for all app hostnames. Each app attaches via a
+***REMOVED*** cross-namespace HTTPRoute (parentRefs -> this Gateway).
+namespace: gateway
+resources:
+  - gateway.yaml
+  - certificate.yaml

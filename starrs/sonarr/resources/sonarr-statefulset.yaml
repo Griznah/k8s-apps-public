@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sonarr
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sonarr
+  serviceName: sonarr
+  template:
+    metadata:
+      annotations:
+        backup.velero.io/backup-volumes: config
+      labels:
+        name: sonarr
+        app: sonarr
+        part-of: starrs
+    spec:
+      containers:
+        - name: sonarr
+          envFrom:
+            - configMapRef:
+                name: sonarr-cm
+          image: sonarr-image ***REMOVED*** lscr.io/linuxserver/sonarr - controlled by Kustomize
+          resources:
+            limits:
+              memory: 4Gi
+            requests:
+              cpu: 100m
+              memory: 1024Mi
+          ports:
+            - containerPort: 8989
+              hostPort: 8989
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: nfs-storage-series
+              mountPath: /sxtnpool/files/media/Series
+            - name: nfs-storage-dump-nzb
+              mountPath: /dump/nzbget/completed/Series
+            - name: nfs-storage-dump
+              mountPath: /dump/rtor/comp
+            - name: nfs-storage-dump-qbt
+              mountPath: /dump/qbt
+      volumes:
+        - name: nfs-storage-series
+          nfs:
+            path: /sxtnpool/files/media/Series
+            server: 10.0.250.200
+            readOnly: false
+        - name: nfs-storage-dump-nzb
+          nfs:
+            path: /dump/nzbget/completed/Series
+            server: 10.0.250.200
+            readOnly: false
+        - name: nfs-storage-dump
+          nfs:
+            path: /dump/rtor/comp
+            server: 10.0.250.200
+            readOnly: false
+        - name: nfs-storage-dump-qbt
+          nfs:
+            path: /dump/qbt
+            server: 10.0.250.200
+            readOnly: false
+      securityContext:
+        runAsUser: 210102
+        runAsGroup: 210101
+        fsGroup: 210101
+        fsGroupChangePolicy: OnRootMismatch
+  volumeClaimTemplates:
+    - metadata:
+        name: config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "storage-fast"
+        resources:
+          requests:
+            storage: 10Gi

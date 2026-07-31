@@ -1,0 +1,36 @@
+***REMOVED*** kustomize build --enable-helm ~/repos/k8s/storage/proxmox-csi-driver| k apply -f -
+***REMOVED*** needs kustomize 5.21 or newer, kubectl 1.29.2 only has 5.0.4
+resources:
+  - resources/storageclass.yaml
+
+generators:
+  - ksops.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+helmCharts:
+- name: proxmox-csi-plugin
+  repo: oci://ghcr.io/sergelogvinov/charts
+  version: 0.5.9 ***REMOVED*** https://ghcr.io/sergelogvinov/charts/proxmox-csi-plugin
+  releaseName: proxmox-csi-plugin
+  namespace: csi-proxmox
+  valuesFile: values.yaml
+  includeCRDs: true
+
+namespace: csi-proxmox
+
+***REMOVED***patches:
+***REMOVED***- patch: |
+***REMOVED***    $patch: delete
+***REMOVED***    apiVersion: storage.k8s.io/v1
+***REMOVED***    kind: StorageClass
+***REMOVED***    metadata:
+***REMOVED***      name: proxmox-data
+***REMOVED***- patch: |
+***REMOVED***    $patch: delete
+***REMOVED***    apiVersion: storage.k8s.io/v1
+***REMOVED***    kind: StorageClass
+***REMOVED***    metadata:
+***REMOVED***      name: proxmox-data-xfs
+***REMOVED***

@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: radarr
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: radarr
+  serviceName: radarr
+  template:
+    metadata:
+      annotations:
+        backup.velero.io/backup-volumes: config
+      labels:
+        name: radarr
+        app: radarr
+        part-of: starrs
+    spec:
+      containers:
+        - name: radarr
+          envFrom:
+            - configMapRef:
+                name: radarr-cm
+          image: radarr-image ***REMOVED*** lscr.io/linuxserver/radarr - controlled by Kustomize
+          resources:
+            limits:
+              memory: 4Gi
+            requests:
+              cpu: 100m
+              memory: 1024Mi
+          ports:
+            - containerPort: 7878
+              hostPort: 7878
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: nfs-storage-movies
+              mountPath: /sxtnpool/files/media/HD_Movies
+            - name: nfs-storage-dump-nzb
+              mountPath: /dump/nzbget/completed/Movies
+            - name: nfs-storage-dump
+              mountPath: /dump/rtor/comp
+            - name: nfs-storage-dump-qbt
+              mountPath: /dump/qbt
+      volumes:
+        - name: nfs-storage-movies
+          nfs:
+            path: /sxtnpool/files/media/HD_Movies
+            server: 10.0.250.200
+            readOnly: false
+        - name: nfs-storage-dump-nzb
+          nfs:
+            path: /dump/nzbget/completed/Movies
+            server: 10.0.250.200
+            readOnly: false
+        - name: nfs-storage-dump
+          nfs:
+            path: /dump/rtor/comp
+            server: 10.0.250.200
+            readOnly: false
+        - name: nfs-storage-dump-qbt
+          nfs:
+            path: /dump/qbt
+            server: 10.0.250.200
+            readOnly: false
+      securityContext:
+        runAsUser: 210102
+        runAsGroup: 210101
+        fsGroup: 210101
+        fsGroupChangePolicy: OnRootMismatch
+  volumeClaimTemplates:
+    - metadata:
+        name: config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "storage-fast"
+        resources:
+          requests:
+            storage: 10Gi

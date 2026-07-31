@@ -1,0 +1,14 @@
+***REMOVED*** VictoriaMetrics Operator.
+***REMOVED*** Chart defaults are already correct for this cluster — only operator-pod sizing is overridden:
+***REMOVED***   - crds.enabled: true / crds.cleanup.enabled: false  (CRDs not wiped on chart uninstall)
+***REMOVED***   - rbac.create: true                                  (operator + per-operand scrape SAs/ClusterRoles)
+***REMOVED***   - admission webhooks enabled                         (self-signed certs; cert-manager not required)
+***REMOVED***   - operator.watchNamespaces: []                       (whole-cluster — needed for VMAgent discovery)
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 200m
+    memory: 512Mi

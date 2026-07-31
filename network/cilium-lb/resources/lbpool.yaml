@@ -1,0 +1,57 @@
+apiVersion: cilium.io/v2
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: bifrost-lb-pool
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+***REMOVED*** General pool for all NON-gateway services (qBittorrent .202 and .208-.210 /
+***REMOVED*** .212-.223 headroom). Cilium gateway services are EXCLUDED via the
+***REMOVED*** serviceSelector (DoesNotExist on the owning-gateway label) so they cannot
+***REMOVED*** grab these IPs; the gateway gets .211 from the dedicated pool below.
+***REMOVED***
+***REMOVED*** Note: .211 is deliberately omitted from this pool's blocks so no non-gateway
+***REMOVED*** service can accidentally claim it.
+***REMOVED*** WireGuard (.200) is OUT OF SCOPE for bifrost (rolled back to sleipnir):
+***REMOVED*** the bryopsida wireguard-chart hardcodes legacy `iptables MASQUERADE` in
+***REMOVED*** PostUp, which fails on Cilium kube-proxy-replacement nodes (iptable_nat
+***REMOVED*** module never loaded). See combined-plan.md §11.
+spec:
+  serviceSelector:
+    matchExpressions:
+      - key: io.cilium.gateway/owning-gateway
+        operator: DoesNotExist
+  blocks:
+    - start: 10.0.50.208
+      stop: 10.0.50.210
+    - start: 10.0.50.212
+      stop: 10.0.50.223
+    ***REMOVED*** qBittorrent torrent-port LB IP (.202). Present from bootstrap so the
+    ***REMOVED*** qbittorrent-tor Service can claim it; reclaimed from sleipnir at the
+    ***REMOVED*** qBittorrent cutover step. WireGuard .200 is NOT here — it stays on
+    ***REMOVED*** sleipnir (WireGuard out of scope for bifrost).
+    - cidr: 10.0.50.202/32
+---
+apiVersion: cilium.io/v2
+kind: CiliumLoadBalancerIPPool
+metadata:
+  name: bifrost-gateway-lb-pool
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+***REMOVED*** Dedicated pool for Cilium Gateway services only. The consolidated gateway
+***REMOVED*** (Service label io.cilium.gateway/owning-gateway=<gateway-name>) matches this
+***REMOVED*** pool exclusively and gets .211 deterministically — no per-Service annotation
+***REMOVED*** required (Cilium does not copy Gateway -> Service annotations, so an
+***REMOVED*** annotation on the Gateway would not propagate).
+spec:
+  serviceSelector:
+    matchExpressions:
+      - key: io.cilium.gateway/owning-gateway
+        operator: Exists
+  blocks:
+    ***REMOVED*** The consolidated Gateway answers on TWO IPs: .211 (primary, the bifrost
+    ***REMOVED*** gateway IP) and .201 (the original sleipnir/Traefik
+    ***REMOVED*** IP, reclaimed after sleipnir retired). Both are pinned via the Gateway's
+    ***REMOVED*** spec.addresses, which Cilium's gateway controller translates into a
+    ***REMOVED*** lbipam.cilium.io/ips request on the auto-created Service.
+    - cidr: 10.0.50.211/32
+    - cidr: 10.0.50.201/32

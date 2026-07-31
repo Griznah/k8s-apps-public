@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: qbittorrent
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qbittorrent
+  serviceName: qbittorrent
+  template:
+    metadata:
+      annotations:
+        backup.velero.io/backup-volumes: config
+      labels:
+        name: qbittorrent
+        app: qbittorrent
+        part-of: downloads
+    spec:
+      containers:
+        - name: qbittorrent
+          envFrom:
+            - configMapRef:
+                name: qbittorrent-cm
+          image: qbittorrent-image ***REMOVED*** controlled by Kustomize
+          resources:
+            limits:
+              memory: 10Gi
+            requests:
+              cpu: 250m
+              memory: 2Gi
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+            - containerPort: 49505
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /config
+            - name: nfs-storage-dump-qbt
+              mountPath: /dump/qbt
+      volumes:
+        - name: nfs-storage-dump-qbt
+          nfs:
+            path: /dump/qbt
+            server: 10.0.250.200
+            readOnly: false
+      securityContext:
+        runAsUser: 210102
+        runAsGroup: 210101
+        fsGroup: 210101
+        fsGroupChangePolicy: "OnRootMismatch"
+  volumeClaimTemplates:
+    - metadata:
+        name: config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "storage-fast"
+        resources:
+          requests:
+            storage: 10Gi

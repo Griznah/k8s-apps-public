@@ -1,0 +1,51 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: storage
+  namespace: argo-system
+  annotations:
+    notifications.argoproj.io/subscribe.on-app-deleted.gmail: you@example.com
+    notifications.argoproj.io/subscribe.on-health-degraded.gmail: you@example.com
+    notifications.argoproj.io/subscribe.on-sync-failed.gmail: you@example.com
+    notifications.argoproj.io/subscribe.on-sync-status-unknown.gmail: you@example.com
+  finalizers:
+    - argocd.argoproj.io/resources-finalizer
+spec:
+  sourceRepos:
+    - "*"
+  destinations:
+    - namespace: "*"
+      server: "*"
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  orphanedResources:
+    warn: false
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: proxmox-csi-plugin
+  namespace: argo-system
+  finalizers:
+    - argocd.argoproj.io/resources-finalizer
+spec:
+  project: storage
+  source:
+    repoURL: git@github.com:Griznah/k8s-apps.git
+    targetRevision: main
+    path: storage/proxmox-csi-plugin
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: csi-proxmox
+  syncPolicy:
+    managedNamespaceMetadata:
+      labels:
+        pod-security.kubernetes.io/audit: privileged
+        pod-security.kubernetes.io/enforce: privileged
+        pod-security.kubernetes.io/warn: privileged
+      annotations:
+        argocd.argoproj.io/sync-wave: "-10"
+    syncOptions:
+      - CreateNamespace=true
+  revisionHistoryLimit: 5

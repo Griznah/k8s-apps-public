@@ -1,0 +1,21 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMAgent
+metadata:
+  name: victoria-metrics
+  namespace: observability
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  ***REMOVED*** Discover every VMServiceScrape/PodScrape/etc. cluster-wide, including the
+  ***REMOVED*** operator-auto-created self-scrapes for this VMSingle and VMAgent.
+  selectAllByDefault: true
+  remoteWrite:
+    - url: "http://vmsingle-victoria-metrics.observability.svc:8429/api/v1/write"
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
+***REMOVED*** Operator auto-creates: Deployment vmagent-victoria-metrics, Service vmagent-victoria-metrics,
+***REMOVED*** and a ServiceAccount + ClusterRole with read on pods/services/endpoints/nodes/kubelet.

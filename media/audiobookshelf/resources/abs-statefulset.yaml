@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: audiobookshelf
+  name: audiobookshelf
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: audiobookshelf
+  serviceName: audiobookshelf
+  template:
+    metadata:
+      annotations:
+        backup.velero.io/backup-volumes: abs-config,abs-metadata
+      labels:
+        name: audiobookshelf
+        app: audiobookshelf
+        part-of: media
+    spec:
+      containers:
+        - name: audiobookshelf
+          envFrom:
+            - configMapRef:
+                name: abs-cm
+          image: abs-image ***REMOVED*** handled by Kustomize
+          tty: true
+          stdin: true
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: 2Gi
+            requests:
+              cpu: 10m
+              memory: 256Mi
+          volumeMounts:
+            - name: abs-metadata
+              mountPath: /metadata
+            - name: abs-config
+              mountPath: /config
+            - name: nfs-storage-audiobooks
+              mountPath: /audiobooks
+            - name: nfs-storage-podcasts
+              mountPath: /podcasts
+            - name: nfs-storage-ebooks
+              mountPath: /ebooks
+      volumes:
+        - name: abs-metadata
+        - name: abs-config
+        - name: nfs-storage-audiobooks
+          nfs:
+            path: /sxtnpool/files/media/audiobooks
+            server: 10.0.250.200
+        - name: nfs-storage-podcasts
+          nfs:
+            path: /sxtnpool/files/media/podcasts
+            server: 10.0.250.200
+        - name: nfs-storage-ebooks
+          nfs:
+            path: /sxtnpool/files/media/ebooks
+            server: 10.0.250.200
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 210101
+        fsGroup: 210101
+  volumeClaimTemplates:
+    - metadata:
+        name: abs-config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "storage-fast"
+        resources:
+          requests:
+            storage: 12Gi
+    - metadata:
+        name: abs-metadata
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "storage-fast"
+        resources:
+          requests:
+            storage: 12Gi

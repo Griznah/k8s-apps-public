@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: qbittorrent-cm
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+data:
+  PGID: "210101"
+  PUID: "210102"
+  TZ: "Europe/Oslo"
+  QBT_WEBUI_PORT: "8080"
+  QBT_VERSION: "latest"
+  QBT_TORRENTING_PORT: "49505"
+  QBT_DOWNLOADS_PATH: "/downloads"

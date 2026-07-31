@@ -1,0 +1,15 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+***REMOVED*** Rendered by ArgoCD (argocd-cm sets kustomize.buildOptions: --enable-helm).
+***REMOVED*** The cilium Application in network/applicationset.yaml deploys this to kube-system
+***REMOVED*** with ServerSideApply, so it adopts the cilium-cli bootstrap release in place
+***REMOVED*** (no disruptive reinstall). Chart version is auto-bumped by Renovate's kustomize
+***REMOVED*** manager (same as argo-cd).
+helmCharts:
+  - name: cilium
+    repo: https://helm.cilium.io
+    version: 1.20.0
+    releaseName: cilium
+    namespace: kube-system
+    valuesFile: values.yaml
+    includeCRDs: true

@@ -1,0 +1,36 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMNodeScrape
+metadata:
+  name: kubelet
+  namespace: observability
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  ***REMOVED*** kubelet's own metrics (kubelet_*) + volume stats (kubelet_volume_stats_*).
+  ***REMOVED*** Scraped per-node on :10250/metrics over https with the vmagent SA token.
+  scheme: https
+  port: "10250"
+  path: /metrics
+  interval: 30s
+  tlsConfig:
+    insecureSkipVerify: true
+  bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+---
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMNodeScrape
+metadata:
+  name: kubelet-cadvisor
+  namespace: observability
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  ***REMOVED*** cAdvisor metrics (container_* incl. container_memory_working_set_bytes,
+  ***REMOVED*** container_cpu_usage_seconds_total, container_network_*). Needed by the
+  ***REMOVED*** k8s-views-{global,namespaces,nodes,pods} dotdc dashboards.
+  scheme: https
+  port: "10250"
+  path: /metrics/cadvisor
+  interval: 30s
+  tlsConfig:
+    insecureSkipVerify: true
+  bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token

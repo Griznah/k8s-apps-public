@@ -1,0 +1,35 @@
+cainjector:
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+  replicaCount: 2
+
+
+config:
+  gatewayAPI:
+    enabled: true
+***REMOVED***extraArgs:
+***REMOVED***  - --enable-gateway-api
+
+global:
+  leaderElection:
+    namespace: cert-manager
+
+installCRDs: true
+
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+
+prometheus:
+  enabled: true
+  ***REMOVED*** servicemonitor:
+  ***REMOVED***   enabled: true
+
+replicaCount: 2
+
+webhook:
+  podDisruptionBudget:
+    enabled: true
+    minAvailable: 1
+  replicaCount: 2

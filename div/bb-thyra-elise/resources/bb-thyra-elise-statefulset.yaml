@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yaml --controller statefulset
+    kompose.version: 1.31.2 (a92241f79)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: app-beta
+  name: app-beta
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: app-beta
+  serviceName: app-beta
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        io.kompose.network/app-beta-default: "true"
+        io.kompose.service: app-beta
+    spec:
+      containers:
+        - env:
+            - name: CSRF_TRUSTED_ORIGINS
+              value: https://app-beta.example.com,https://app-alpha.example.com
+            - name: PGID
+              value: "1000"
+            - name: PUID
+              value: "1000"
+            - name: TZ
+              value: Europe/Oslo
+          image: app-beta-image ***REMOVED*** lscr.io/linuxserver/babybuddy:latest
+          name: app-beta
+          ports:
+            - containerPort: 8000
+              hostPort: 8000
+              protocol: TCP
+          resources: {}
+          volumeMounts:
+            - mountPath: /config
+              name: app-beta-config
+      restartPolicy: Always
+  updateStrategy: {}
+  volumeClaimTemplates:
+    - metadata:
+        creationTimestamp: null
+        labels:
+          io.kompose.service: app-beta-config
+        name: app-beta-config
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: storage-fast
+        resources:
+          requests:
+            storage: 1Gi
+      status: {}

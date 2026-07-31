@@ -1,0 +1,14 @@
+***REMOVED*** -- Prometheus metrics
+metrics:
+  ***REMOVED*** -- Enable Prometheus metrics.
+  enabled: true
+  ***REMOVED*** -- Prometheus metrics port.
+  port: 8080
+  type: annotation
+
+***REMOVED*** -- Proxmox config comes from the ksops Secret in secrets/proxmox-csi-secret.yaml.
+***REMOVED*** Pinning existingConfigSecret makes the chart mount ours (controller-deployment
+***REMOVED*** `if .Values.existingConfigSecret` branch) instead of templating its own.
+***REMOVED*** Keep `config:` empty: if config.clusters is ever set, templates/secrets.yaml
+***REMOVED*** emits a Secret named <fullname> (== proxmox-csi-plugin) that collides with ours.
+existingConfigSecret: proxmox-csi-plugin

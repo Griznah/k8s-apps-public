@@ -1,0 +1,29 @@
+***REMOVED*** Grants the Cilium agent (ServiceAccount `cilium`) access to
+***REMOVED*** coordination.k8s.io/leases, required for L2-announcement leader election.
+***REMOVED*** Deliberately a dedicated ClusterRole + binding rather than a patch on the
+***REMOVED*** chart-owned clusterrole/cilium, so it survives every `helm upgrade` of Cilium.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cilium-l2-leases
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+rules:
+  - apiGroups: ["coordination.k8s.io"]
+    resources: ["leases"]
+    verbs: ["create", "get", "list", "update", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cilium-l2-leases
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cilium-l2-leases
+subjects:
+  - kind: ServiceAccount
+    name: cilium
+    namespace: kube-system

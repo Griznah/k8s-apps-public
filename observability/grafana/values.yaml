@@ -1,0 +1,39 @@
+resources:
+  limits:
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+admin:
+  existingSecret: grafana-admin
+
+persistence:
+  type: pvc
+  enabled: true
+  storageClassName: storage-fast
+  size: 10Gi
+
+plugins:
+  - grafana-clock-panel
+
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: VictoriaMetrics
+        type: prometheus
+        url: http://vmsingle-victoria-metrics.observability.svc:8429
+        access: proxy
+        isDefault: true
+
+sidecar:
+  dashboards:
+    enabled: true
+    label: grafana_dashboard
+    labelValue: "1"
+    searchNamespace: observability
+    ***REMOVED*** Group dashboards into folders: a ConfigMap carrying the `grafana_folder`
+    ***REMOVED*** annotation lands in that folder; otherwise it falls back to "General".
+    folderAnnotation: grafana_folder
+    defaultFolderName: General

@@ -1,0 +1,13 @@
+apiVersion: cilium.io/v2alpha1
+kind: CiliumL2AnnouncementPolicy
+metadata:
+  name: bifrost-l2-policy
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  ***REMOVED*** Announce from all nodes (bifrost is 3 untainted control-plane nodes).
+  nodeSelector: {}
+  loadBalancerIPs: true
+  externalIPs: false
+  ***REMOVED*** Empty interfaces list = auto-detect the right interface(s).
+  interfaces: []

@@ -1,0 +1,93 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: network
+  namespace: argo-system
+  annotations:
+    notifications.argoproj.io/subscribe.on-app-deleted.gmail: you@example.com
+    notifications.argoproj.io/subscribe.on-health-degraded.gmail: you@example.com
+    notifications.argoproj.io/subscribe.on-sync-failed.gmail: you@example.com
+    notifications.argoproj.io/subscribe.on-sync-status-unknown.gmail: you@example.com
+  finalizers:
+    - argocd.argoproj.io/resources-finalizer
+spec:
+  sourceRepos:
+    - "*"
+  destinations:
+    - namespace: "*"
+      server: "*"
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  orphanedResources:
+    warn: false
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: network
+  namespace: argo-system
+spec:
+  goTemplate: true
+  generators:
+    - git:
+        repoURL: git@github.com:Griznah/k8s-apps.git
+        revision: main
+        directories:
+          - path: "network/*"
+          - exclude: true
+            path: "network/cilium"
+          - exclude: true
+            path: "network/*.disabled"
+  syncPolicy:
+    preserveResourcesOnDeletion: false
+    applicationsSync: create-update
+  template:
+    metadata:
+      name: "{{ .path.basenameNormalized }}"
+      labels:
+        app-group: network
+    spec:
+      project: network
+      source:
+        repoURL: git@github.com:Griznah/k8s-apps.git
+        targetRevision: main
+        path: "{{ .path.path }}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ index .path.segments 1 }}"
+      syncPolicy:
+        managedNamespaceMetadata:
+          annotations:
+            argocd.argoproj.io/sync-wave: "-10"
+        ***REMOVED***        automated:
+        ***REMOVED***          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+      revisionHistoryLimit: 5
+---
+***REMOVED*** Cilium is the cluster CNI and lives in kube-system, so it can't use the
+***REMOVED*** path-derived destination above. Defined explicitly here: rendered via
+***REMOVED*** kustomize+helm (network/cilium/kustomization.yaml), installed at bootstrap by
+***REMOVED*** the cilium-cli Job, and adopted post-bootstrap via ServerSideApply (no
+***REMOVED*** reinstall). Manual sync — CNI changes are reviewed, then synced.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cilium-cni
+  namespace: argo-system
+  labels:
+    app-group: network
+spec:
+  project: network
+  source:
+    repoURL: git@github.com:Griznah/k8s-apps.git
+    targetRevision: main
+    path: network/cilium
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  revisionHistoryLimit: 5
+  syncPolicy:
+    syncOptions:
+      - ServerSideApply=true

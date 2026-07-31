@@ -1,0 +1,26 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMSingle
+metadata:
+  name: victoria-metrics
+  namespace: observability
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  ***REMOVED*** Bare number = months (operator convention; matches the VMSingle docs example "12").
+  retentionPeriod: "6"
+  removePvcAfterDelete: true
+  storage:
+    storageClassName: storage-fast
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 20Gi
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      memory: 2Gi
+***REMOVED*** No Ingress/LoadBalancer: VMSingle has no built-in auth, so it stays ClusterIP
+***REMOVED*** (operator-created Service vmsingle-victoria-metrics:8429). Admin via kubectl port-forward.

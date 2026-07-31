@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: radarr-cm
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+data:
+  PGID: "210101"
+  PUID: "210102"
+  TZ: "Europe/Oslo"

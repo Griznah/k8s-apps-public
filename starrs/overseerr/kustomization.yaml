@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- resources/overseerr-statefulset.yaml
+- resources/overseerr-service.yaml
+- resources/overseerr-gateway-route.yaml
+- resources/overseerr-cm.yaml
+
+namespace: starrs
+
+images:
+- name: overseerr-image
+  newName: lscr.io/linuxserver/overseerr
+  newTag: v1.34.0-ls136 ***REMOVED*** https://github.com/linuxserver/docker-overseerr/releases

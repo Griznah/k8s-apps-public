@@ -1,0 +1,41 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: consolidated-gateway
+  namespace: gateway
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+    ***REMOVED*** The LB IP (.211) is NOT pinned here. Cilium does not copy Gateway -> Service
+    ***REMOVED*** annotations, so an `lbipam.cilium.io/ips` annotation on this Gateway would
+    ***REMOVED*** never reach the auto-created `cilium-gateway-consolidated-gateway` Service.
+    ***REMOVED*** Instead, .211 is assigned deterministically by a dedicated
+    ***REMOVED*** CiliumLoadBalancerIPPool (`bifrost-gateway-lb-pool`) whose serviceSelector
+    ***REMOVED*** matches `io.cilium.gateway/owning-gateway: Exists` — see
+    ***REMOVED*** network/cilium-lb/resources/lbpool.yaml. (Validated: gateway Service is
+    ***REMOVED*** created with .211 and zero annotations.)
+spec:
+  gatewayClassName: cilium
+  ***REMOVED*** Two addresses: the gateway answers on BOTH .211 (primary) and .201 (the
+  ***REMOVED*** original sleipnir/Traefik IP, now reclaimed). Cilium's gateway controller
+  ***REMOVED*** reads spec.addresses and requests these IPs for the auto-created Service
+  ***REMOVED*** (unlike annotations, which don't propagate). Both IPs must be present in
+  ***REMOVED*** the `bifrost-gateway-lb-pool` (see cilium-lb/resources/lbpool.yaml).
+  addresses:
+    - type: IPAddress
+      value: 10.0.50.211
+    - type: IPAddress
+      value: 10.0.50.201
+  listeners:
+    - name: https
+      protocol: HTTPS
+      port: 443
+      ***REMOVED*** Empty hostname = match-all. Per-app HTTPRoutes supply the hostnames and
+      ***REMOVED*** are matched by SNI/Host header on this single listener.
+      allowedRoutes:
+        namespaces:
+          from: All
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - kind: Secret
+            name: example-net-tls

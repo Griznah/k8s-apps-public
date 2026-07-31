@@ -1,0 +1,13 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":approveMajorUpdates",
+    ":automergeMinor",
+    ":automergePatch",
+    ":automergeDigest"
+  ],
+  "prHourlyLimit": 10,
+  "schedule": "* 5-23 * * *",
+  "ignoreTests": true
+}

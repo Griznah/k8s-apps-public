@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - resources/unpackerr-deployment.yaml
+***REMOVED***- resources/unpackerr-gateway-route.yaml
+
+generators:
+  - ksops.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+namespace: starrs
+
+images:
+  - name: unpackerr-image
+    newName: golift/unpackerr
+    newTag: 0.15.2 ***REMOVED*** https://github.com/Unpackerr/unpackerr/releases

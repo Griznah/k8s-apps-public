@@ -1,0 +1,20 @@
+resources:
+- resources/namespace.yaml
+***REMOVED***  - resources/clusterIssuerStaging.yaml
+- resources/clusterIssuer.yaml
+
+generators:
+- ksops.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+helmCharts:
+- includeCRDs: true
+  name: cert-manager
+  namespace: cert-manager
+  releaseName: cert-manager
+  repo: https://charts.jetstack.io
+  valuesFile: values.yaml
+  version: v1.21.1 ***REMOVED*** https://artifacthub.io/packages/helm/cert-manager/cert-manager
+

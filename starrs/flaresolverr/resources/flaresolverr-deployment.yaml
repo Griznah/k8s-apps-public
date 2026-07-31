@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: starrs
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.31.2 (a92241f79)
+  labels:
+    io.kompose.service: flaresolverr
+  name: flaresolverr
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: flaresolverr
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.31.2 (a92241f79)
+      labels:
+        io.kompose.network/flaresolverrdisabled-default: "true"
+        io.kompose.service: flaresolverr
+    spec:
+      containers:
+        - env:
+            - name: CAPTCHA_SOLVER
+              value: none
+            - name: LOG_HTML
+              value: "false"
+            - name: LOG_LEVEL
+              value: info
+            - name: TZ
+              value: Europe/Oslo
+          image: flaresolverr-image ***REMOVED*** ghcr.io/flaresolverr/flaresolverr:latest
+          name: flaresolverr
+          ports:
+            - containerPort: 8191
+              hostPort: 8191
+              protocol: TCP
+          resources:
+            limits:
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+      restartPolicy: Always

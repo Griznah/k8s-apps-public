@@ -1,0 +1,24 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: node-exporter
+  namespace: observability
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  ***REMOVED*** prometheus-node-exporter chart labels the Service
+  ***REMOVED*** app.kubernetes.io/name: prometheus-node-exporter, app.kubernetes.io/instance: node-exporter.
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: node-exporter
+  endpoints:
+    - port: metrics       ***REMOVED*** node-exporter Service port (9100) is named "metrics"
+      interval: 30s
+      relabelConfigs:
+        - sourceLabels: [__meta_kubernetes_endpoint_node_name]
+          targetLabel: node
+        ***REMOVED*** The k8s-views-nodes dashboard joins kube_node_info.node against
+        ***REMOVED*** node_uname_info.nodename; force nodename to the k8s node name so the
+        ***REMOVED*** join is robust to hostname/IP drift (per the dashboard's known issue).
+        - sourceLabels: [__meta_kubernetes_endpoint_node_name]
+          targetLabel: nodename

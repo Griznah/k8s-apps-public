@@ -1,0 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+***REMOVED*** Cilium LB IPAM pool + L2 announcement policy (cluster-scoped CRDs), plus the
+***REMOVED*** dedicated leases RBAC that lets the Cilium agent do L2 leader election.
+***REMOVED***
+***REMOVED*** The feature flags (enable-lb-ipam, enable-l2-announcements) are driven from the
+***REMOVED*** Cilium Helm values (network/cilium/values.yaml), NOT hand-edited in cilium-config
+***REMOVED*** — a `helm upgrade` re-renders the ConfigMap and silently wipes manual edits.
+resources:
+  - resources/lbpool.yaml
+  - resources/l2policy.yaml
+  - resources/cilium-l2-leases-rbac.yaml

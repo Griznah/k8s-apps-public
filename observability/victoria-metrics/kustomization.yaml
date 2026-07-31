@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: observability
+
+helmCharts:
+  - name: victoria-metrics-operator
+    repo: https://victoriametrics.github.io/helm-charts
+    version: 0.67.0            ***REMOVED*** appVersion v0.72.0
+    releaseName: victoria-metrics-operator
+    namespace: observability
+    valuesFile: values.yaml
+    includeCRDs: true
+
+resources:
+  - resources/vmsingle.yaml
+  - resources/vmagent.yaml
+  - resources/vmsm-kube-state-metrics.yaml
+  - resources/vmsm-node-exporter.yaml
+  - resources/vmsm-kubelet.yaml
+  - resources/vmsm-kube-apiserver.yaml
+  - resources/vmpodscrape-coredns.yaml

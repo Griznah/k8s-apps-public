@@ -1,0 +1,130 @@
+configs:
+  cm:
+    ***REMOVED*** --enable-alpha-plugins --enable-exec required for the ksops exec plugin to load (see repoServer below)
+    kustomize.buildOptions: "--enable-helm --enable-alpha-plugins --enable-exec"
+    users.anonymous.enabled: "false"
+    timeout.reconciliation: "60s"
+  params:
+    server.insecure: true
+    server.grpc-web: true
+    applicationsetcontroller.policy: "create-update"
+
+crds:
+  install: true
+  keep: false
+
+global:
+  revisionHistoryLimit: 3
+  addPrometheusAnnotations: true
+
+applicationSet:
+  metrics:
+    enabled: true
+  replicas: 2
+  resources:
+    limits:
+      memory: 4096Mi
+    requests:
+      cpu: 100m
+      memory: 512Mi
+
+controller:
+  metrics:
+    enabled: true
+  replicas: 2
+  resources:
+    limits:
+      memory: 4096Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+dex:
+  metrics:
+    enabled: true
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 10m
+      memory: 128Mi
+
+redis-ha:
+  enabled: true
+  replicas: 2
+  ***REMOVED*** https://github.com/argoproj/argo-cd/issues/11388
+  haproxy:
+    replicas: 2
+    IPv6:
+      enabled: false
+redis:
+  resources:
+    requests:
+      memory: 200Mi
+      cpu: 100m
+    limits:
+      memory: 700Mi
+
+repoServer:
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplicas: 3
+  metrics:
+    enabled: true
+  resources:
+    limits:
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  initContainers:
+    - name: install-ksops
+      image: viaductoss/ksops:v4.5.1
+      ***REMOVED*** no --with-kustomize: ArgoCD's bundled kustomize (v5.8.x) loads ksops as an
+      ***REMOVED*** exec plugin; the older forked kustomize that --with-kustomize ships demands
+      ***REMOVED*** a Go .so that ksops v4.x no longer publishes.
+      command: ["/usr/local/bin/ksops", "install", "/custom-tools"]
+      volumeMounts:
+        - mountPath: /custom-tools
+          name: custom-tools
+  volumeMounts:
+    ***REMOVED*** ksops binary lands at kustomize's plugin-discovery path. The file MUST be
+    ***REMOVED*** named lowercase 'ksops' and live at <XDG>/kustomize/plugin/viaduct.ai/v1/ksops/
+    ***REMOVED*** (kustomize routes kind: ksops to the Go loader if misnamed/placed).
+    - mountPath: /home/argocd/.config/kustomize/plugin/viaduct.ai/v1/ksops/ksops
+      name: custom-tools
+      subPath: ksops
+    - mountPath: /.config/sops/age
+      name: sops-age
+      readOnly: true
+  volumes:
+    - name: custom-tools
+      emptyDir: {}
+    - name: sops-age
+      secret:
+        secretName: sops-age-key
+  extraEnv:
+    - name: XDG_CONFIG_HOME
+      value: /home/argocd/.config
+    - name: SOPS_AGE_KEY_FILE
+      value: /.config/sops/age/keys.txt
+
+server:
+  autoscaling:
+    enabled: true
+    minReplicas: 2
+    maxReplica: 3
+  metrics:
+    enabled: true
+    ***REMOVED***service:
+    ***REMOVED***  annotations:
+    ***REMOVED***    metallb.io/loadBalancerIPs: 10.0.50.250
+    ***REMOVED***  type: LoadBalancer
+  resources:
+    limits:
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+

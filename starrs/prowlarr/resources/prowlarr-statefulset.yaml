@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: prowlarr
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prowlarr
+  serviceName: prowlarr
+  template:
+    metadata:
+      annotations:
+        backup.velero.io/backup-volumes: config
+      labels:
+        name: prowlarr
+        app: prowlarr
+        part-of: starrs
+    spec:
+      containers:
+        - name: prowlarr
+          envFrom:
+            - configMapRef:
+                name: prowlarr-cm
+          image: prowlarr-image ***REMOVED*** lscr.io/linuxserver/prowlarr - controlled by Kustomize
+          resources:
+            limits:
+              memory: 2Gi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          ports:
+            - containerPort: 9696
+              hostPort: 9696
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      securityContext:
+        runAsUser: 210102
+        runAsGroup: 210101
+        fsGroup: 210101
+        fsGroupChangePolicy: OnRootMismatch
+  volumeClaimTemplates:
+    - metadata:
+        name: config
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "storage-fast"
+        resources:
+          requests:
+            storage: 1Gi

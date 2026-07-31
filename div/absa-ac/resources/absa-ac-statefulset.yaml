@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: absa-ac
+  namespace: absa-ac
+  labels:
+    app: absa-ac
+spec:
+  serviceName: absa-ac
+  replicas: 1
+  selector:
+    matchLabels:
+      app: absa-ac
+  template:
+    metadata:
+      labels:
+        app: absa-ac
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        fsGroup: 1001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: absa-ac
+          image: ghcr.io/example/ac-discordbot:0.5.5
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: absa-ac-config
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 5m
+              memory: 32Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: absa-ac

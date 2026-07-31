@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - resources/sonarr-statefulset.yaml
+  - resources/sonarr-service.yaml
+  - resources/sonarr-gateway-route.yaml
+  - resources/sonarr-cm.yaml
+
+namespace: starrs
+
+images:
+  - name: sonarr-image
+    newName: ghcr.io/home-operations/sonarr
+    newTag: rolling@sha256:e679d9abf64f7a1edaf340f5c3fea20efed55fb1489ef8ba42f3404caed43590 ***REMOVED*** https://github.com/home-operations/containers/pkgs/container/sonarr

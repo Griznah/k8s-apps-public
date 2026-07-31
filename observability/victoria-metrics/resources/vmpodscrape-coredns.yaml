@@ -1,0 +1,21 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMPodScrape
+metadata:
+  name: coredns
+  namespace: observability
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  ***REMOVED*** CoreDNS exposes metrics on the pod's `metrics` port (9153), but the
+  ***REMOVED*** kube-system/kube-dns Service only exposes the DNS ports — so scrape the
+  ***REMOVED*** pods directly. Provides coredns_* metrics for the k8s-system-coredns
+  ***REMOVED*** dashboard.
+  selector:
+    matchLabels:
+      k8s-app: kube-dns
+  namespaceSelector:
+    matchNames:
+      - kube-system
+  podMetricsEndpoints:
+    - port: metrics
+      interval: 30s

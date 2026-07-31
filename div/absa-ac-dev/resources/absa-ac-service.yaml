@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: absa-ac-dev-headless
+  namespace: absa-ac-dev
+spec:
+  clusterIP: None
+  selector:
+    app: absa-ac-dev
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: absa-ac-dev
+  namespace: absa-ac-dev
+spec:
+  selector:
+    app: absa-ac-dev
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP

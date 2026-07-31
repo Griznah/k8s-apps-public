@@ -1,0 +1,22 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: absa-ac
+  namespace: absa-ac
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  parentRefs:
+    - name: consolidated-gateway
+      namespace: gateway
+  hostnames:
+    - absa-ac.k8s.example.com
+    - absa-ac.example.com
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: absa-ac
+          port: 8080

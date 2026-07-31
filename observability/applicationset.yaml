@@ -1,0 +1,63 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: observability
+  namespace: argo-system
+  annotations:
+    notifications.argoproj.io/subscribe.on-app-deleted.gmail: you@example.com
+    notifications.argoproj.io/subscribe.on-health-degraded.gmail: you@example.com
+    notifications.argoproj.io/subscribe.on-sync-failed.gmail: you@example.com
+    notifications.argoproj.io/subscribe.on-sync-status-unknown.gmail: you@example.com
+  finalizers:
+  - argocd.argoproj.io/resources-finalizer
+spec:
+  sourceRepos:
+  - "*"
+  destinations:
+  - namespace: "*"
+    server: "*"
+  clusterResourceWhitelist:
+  - group: "*"
+    kind: "*"
+  orphanedResources:
+    warn: false
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: observability
+  namespace: argo-system
+spec:
+  generators:
+  - git:
+      repoURL: git@github.com:Griznah/k8s-apps.git
+      revision: main
+      directories:
+      - path: "observability/*"
+      - exclude: true
+        path: "observability/*.disabled"
+  syncPolicy:
+    preserveResourcesOnDeletion: false
+    applicationsSync: create-update
+  template:
+    metadata:
+      name: "{{ path.basenameNormalized }}"
+      annotations:
+        argocd.argoproj.io/compare-options: ServerSideDiff=true,IncludeMutationWebhook=true
+      labels:
+        app-group: observability
+    spec:
+      project: observability
+      source:
+        repoURL: git@github.com:Griznah/k8s-apps.git
+        targetRevision: main
+        path: "{{ path }}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: observability
+      syncPolicy:
+        automated:
+          selfHeal: true
+        syncOptions:
+          - ServerSideApply=true
+      revisionHistoryLimit: 5

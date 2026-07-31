@@ -1,0 +1,24 @@
+fullnameOverride: node-exporter
+
+service:
+  port: 9100
+  targetPort: 9100
+
+serviceAccount:
+  create: true
+
+***REMOVED*** VMAgent scrapes via VMServiceScrape; chart ServiceMonitor disabled
+serviceMonitor:
+  enabled: false
+
+***REMOVED*** Resource limits (matching your other components)
+resources:
+  requests:
+    cpu: 10m
+    memory: 32Mi
+  limits:
+    memory: 64Mi
+
+***REMOVED*** Node tolerations to run on all nodes
+tolerations:
+  - operator: Exists

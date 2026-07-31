@@ -1,0 +1,33 @@
+***REMOVED*** SOPS configuration — age backend
+***REMOVED***
+***REMOVED*** Decrypt:  sops -d <file>
+***REMOVED*** Edit:     sops <file>    (opens $EDITOR, re-encrypts on save)
+***REMOVED*** CLI encrypt: sops -e <file>
+
+creation_rules:
+  ***REMOVED*** K8s Secrets (data/stringData) — argo, security, observability, network dirs
+  - path_regex: ^(argo|security|observability|network).*/.*\.yaml$
+    encrypted_regex: ^(data|stringData)$
+    key_groups:
+      - age:
+          - age1kvjm0fp0gzylnkz6r7punejtqfq8rvzsjhaptwu2ae47nvq2sceqc4rr8z
+
+  ***REMOVED*** ConfigMaps with sensitive values — div/absa-ac*, starrs/unpackerr
+  - path_regex: ^(div|starrs).*/.*(cm|configmap)\.yaml$
+    encrypted_regex: ^(data)$
+    key_groups:
+      - age:
+          - age1kvjm0fp0gzylnkz6r7punejtqfq8rvzsjhaptwu2ae47nvq2sceqc4rr8z
+
+  ***REMOVED*** Encrypted files in secrets/ dirs — encrypt only data and stringData fields
+  - path_regex: ^.*/secrets/.*\.yaml$
+    encrypted_regex: ^(data|stringData)$
+    key_groups:
+      - age:
+          - age1kvjm0fp0gzylnkz6r7punejtqfq8rvzsjhaptwu2ae47nvq2sceqc4rr8z
+
+  ***REMOVED*** Velero cloud credentials (raw secrets/ file, full-file encrypt; gitignored)
+  - path_regex: ^backup/velero/secrets/cloud-credentials\.yaml$
+    key_groups:
+      - age:
+          - age1kvjm0fp0gzylnkz6r7punejtqfq8rvzsjhaptwu2ae47nvq2sceqc4rr8z

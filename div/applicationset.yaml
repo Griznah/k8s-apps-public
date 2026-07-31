@@ -1,0 +1,63 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: div
+  namespace: argo-system
+  annotations:
+    notifications.argoproj.io/subscribe.on-app-deleted.gmail: you@example.com
+    notifications.argoproj.io/subscribe.on-health-degraded.gmail: you@example.com
+    notifications.argoproj.io/subscribe.on-sync-failed.gmail: you@example.com
+    notifications.argoproj.io/subscribe.on-sync-status-unknown.gmail: you@example.com
+  finalizers:
+    - argocd.argoproj.io/resources-finalizer
+spec:
+  sourceRepos:
+    - "*"
+  destinations:
+    - namespace: "*"
+      server: "*"
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  orphanedResources:
+    warn: false
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: div
+  namespace: argo-system
+spec:
+  generators:
+    - git:
+        repoURL: git@github.com:Griznah/k8s-apps.git
+        revision: main
+        directories:
+          ***REMOVED*** div/coredns disabled: Talos provides CoreDNS on bifrost
+          - path: "div/app-beta"
+          - path: "div/absa-ac-dev"
+          - path: "div/absa-ac"
+          - path: "div/metrics-server"
+          - exclude: true
+            path: "div/*.disabled"
+  syncPolicy:
+    preserveResourcesOnDeletion: false
+    applicationsSync: create-update
+  template:
+    metadata:
+      name: "{{ path.basenameNormalized }}"
+      labels:
+        app-group: div
+    spec:
+      project: div
+      source:
+        repoURL: git@github.com:Griznah/k8s-apps.git
+        targetRevision: main
+        path: "{{ path }}"
+      destination:
+        server: https://kubernetes.default.svc
+      revisionHistoryLimit: 5
+      syncPolicy:
+        automated:
+          selfHeal: true
+

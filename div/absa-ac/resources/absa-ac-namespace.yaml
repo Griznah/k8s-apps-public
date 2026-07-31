@@ -1,0 +1,9 @@
+***REMOVED*** Create Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: absa-ac
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
+  labels:
+    name: absa-ac

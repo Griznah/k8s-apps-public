@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- resources/01_namespace.yaml
+- resources/app-beta-statefulset.yaml
+- resources/app-beta-service.yaml
+- resources/app-beta-gateway-route.yaml
+
+namespace: app-beta
+
+images:
+- name: app-beta-image
+  newName: lscr.io/linuxserver/babybuddy
+  newTag: v2.6.3-ls170 ***REMOVED*** https://github.com/linuxserver/docker-babybuddy/releases

@@ -1,0 +1,68 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: observability
+
+helmCharts:
+  - name: grafana
+    repo: https://grafana.github.io/helm-charts
+    version: 10.5.15
+    includeCRDs: true
+    releaseName: grafana
+    namespace: observability
+    valuesFile: values.yaml
+
+resources:
+  - resources/grafana-gateway-route.yaml
+
+generators:
+  - ksops.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+generatorOptions:
+  labels:
+    grafana_dashboard: "1"
+  disableNameSuffixHash: true
+
+configMapGenerator:
+  - name: victoriametrics-dashboards
+    files:
+      - dashboards/victoriametrics/victoriametrics.json
+      - dashboards/victoriametrics/vmagent.json
+      - dashboards/victoriametrics/operator.json
+      - dashboards/victoriametrics/metrics-explorer.json
+  - name: kubernetes-dashboards
+    files:
+      ***REMOVED*** dotdc/grafana-dashboards-kubernetes — datasource variable resolves to the
+      ***REMOVED*** VictoriaMetrics datasource (type: prometheus). No JSON edits needed.
+      - dashboards/kubernetes/k8s-views-global.json
+      - dashboards/kubernetes/k8s-views-namespaces.json
+      - dashboards/kubernetes/k8s-views-nodes.json
+      - dashboards/kubernetes/k8s-views-pods.json
+      - dashboards/kubernetes/k8s-system-api-server.json
+      - dashboards/kubernetes/k8s-system-coredns.json
+
+***REMOVED*** configMapGenerator can't set per-entry annotations, so patch the stable
+***REMOVED*** (unhashed) ConfigMap names to drive the Grafana `grafana_folder` annotation.
+patches:
+  - target:
+      kind: ConfigMap
+      name: victoriametrics-dashboards
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: victoriametrics-dashboards
+        annotations:
+          grafana_folder: VictoriaMetrics
+  - target:
+      kind: ConfigMap
+      name: kubernetes-dashboards
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: kubernetes-dashboards
+        annotations:
+          grafana_folder: Kubernetes

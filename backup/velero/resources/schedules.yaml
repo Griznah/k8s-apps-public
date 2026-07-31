@@ -1,0 +1,97 @@
+***REMOVED*** Velero backup schedules.
+***REMOVED***
+***REMOVED*** App config (audiobookshelf, downloads, starrs) is backed up via Kopia FSB.
+***REMOVED*** Only each app's small `config` PVC is opted in (per-pod annotation
+***REMOVED*** backup.velero.io/backup-volumes); the large read-only NFS media mounts are
+***REMOVED*** NOT backed up. These apps also produce their own consistent on-disk backups
+***REMOVED*** (e.g. *arr scheduled DB backups, audiobookshelf DB backups); Kopia copies
+***REMOVED*** those backup folders alongside the live config, giving point-in-time
+***REMOVED*** consistent restores.
+***REMOVED***
+***REMOVED*** absa-ac, absa-ac-dev and app-beta are intentionally EXCLUDED.
+***REMOVED***
+***REMOVED*** Retention is implemented as grandfather-father-son across three schedules
+***REMOVED*** (Velero has no native GFS): each Schedule's `ttl` prunes its own backups.
+
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: apps-daily
+  namespace: velero
+  labels:
+    app-group: backup
+spec:
+  schedule: "0 2 * * *" ***REMOVED*** daily 02:00
+  template:
+    includedNamespaces:
+      - audiobookshelf
+      - downloads
+      - starrs
+    storageLocation: default
+    defaultVolumesToFsBackup: false
+    ttl: 168h ***REMOVED*** keep 7 days
+
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: apps-weekly
+  namespace: velero
+  labels:
+    app-group: backup
+spec:
+  schedule: "30 2 * * 0" ***REMOVED*** weekly, Sunday 02:30 (offset from daily)
+  template:
+    includedNamespaces:
+      - audiobookshelf
+      - downloads
+      - starrs
+    storageLocation: default
+    defaultVolumesToFsBackup: false
+    ttl: 672h ***REMOVED*** keep 4 weeks
+
+---
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: apps-monthly
+  namespace: velero
+  labels:
+    app-group: backup
+spec:
+  schedule: "0 3 1 * *" ***REMOVED*** monthly, 1st of month 03:00
+  template:
+    includedNamespaces:
+      - audiobookshelf
+      - downloads
+      - starrs
+    storageLocation: default
+    defaultVolumesToFsBackup: false
+    ttl: 4320h ***REMOVED*** keep 6 months
+
+---
+***REMOVED*** Capture only runtime Secrets that are NOT in git (cloudflare token, letsencrypt
+***REMOVED*** account key, proxmox-csi token, gateway cert, argocd-secret, etc.). The rest of
+***REMOVED*** these namespaces is rebuilt from git + Helm values; no PV data here.
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: infra-secrets-daily
+  namespace: velero
+  labels:
+    app-group: backup
+spec:
+  schedule: "30 3 * * *" ***REMOVED*** daily 03:30 (after the app backups)
+  template:
+    includedNamespaces:
+      - cert-manager
+      - csi-proxmox
+      - gateway
+      - argo-system
+      - kube-system
+    includedResources:
+      - secrets
+    storageLocation: default
+    defaultVolumesToFsBackup: false
+    ttl: 336h ***REMOVED*** keep 14 days

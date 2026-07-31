@@ -1,0 +1,29 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: argocd
+  namespace: argo-system
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  parentRefs:
+    - group: gateway.networking.k8s.io
+      kind: Gateway
+    ***REMOVED*** Cross-namespace attach to the consolidated Gateway in namespace `gateway`.
+    ***REMOVED*** The Gateway allows routes from all namespaces (allowedRoutes.namespaces.from: All).
+      name: consolidated-gateway
+      namespace: gateway
+  hostnames:
+    - argocd.k8s.example.com
+    - argocd.example.com
+  rules:
+    - backendRefs:
+        - group: ''
+          kind: Service
+          name: argocd-server
+          port: 80
+          weight: 1
+      matches:
+        - path:
+            type: PathPrefix
+            value: /

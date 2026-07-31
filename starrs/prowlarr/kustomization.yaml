@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - resources/prowlarr-statefulset.yaml
+  - resources/prowlarr-service.yaml
+  - resources/prowlarr-gateway-route.yaml
+  - resources/prowlarr-cm.yaml
+
+namespace: starrs
+
+images:
+  - name: prowlarr-image
+    newName: ghcr.io/home-operations/prowlarr
+    newTag: rolling@sha256:f2db7fc93c2c26476de74695b565bfced0f39255cdba30fedf6d1ec45789f818 ***REMOVED*** https://github.com/home-operations/containers/pkgs/container/prowlarr
+***REMOVED***    newName: lscr.io/linuxserver/prowlarr
+***REMOVED***    newTag: 1.30.2.4939-ls105 ***REMOVED*** https://github.com/linuxserver/docker-prowlarr/releases

@@ -1,0 +1,79 @@
+***REMOVED*** Velero Helm chart values
+***REMOVED*** Chart 12.1.0 / Velero 1.18.1
+***REMOVED***
+***REMOVED*** PV data path: Kopia file-system backup ONLY.
+***REMOVED***   The Proxmox CSI driver (csi.proxmox.sinextra.dev) declares no snapshot
+***REMOVED***   capability and the VolumeSnapshot CRDs are not installed, so CSI snapshots
+***REMOVED***   are disabled and every PVC is backed up at the file level via the node-agent
+***REMOVED***   (Kopia). This is the portable path needed to restore into another cluster.
+***REMOVED***
+***REMOVED*** Object storage: locally hosted S3-compatible host (storage-s3.lan.example.com).
+***REMOVED*** Credentials are supplied out-of-band via the `cloud-credentials` Secret in the
+***REMOVED*** `velero` namespace (NOT rendered by this chart, NOT ArgoCD-managed) — same
+***REMOVED*** pattern as the proxmox-csi-plugin Secret. See secrets/cloud-credentials.yaml.example.
+
+deployNodeAgent: true
+snapshotsEnabled: false
+backupsEnabled: true
+
+configuration:
+  ***REMOVED*** Opt-in: only pod volumes listed in each pod's
+  ***REMOVED*** backup.velero.io/backup-volumes annotation are backed up via Kopia. This
+  ***REMOVED*** excludes the large read-only NFS media mounts — each app opts in only its
+  ***REMOVED*** small `config` PVC via a StatefulSet pod-template annotation.
+  defaultVolumesToFsBackup: false
+  backupStorageLocation:
+    - name: default
+      provider: aws
+      bucket: backups
+      prefix: velero/bifrost
+      default: true
+      accessMode: ReadWrite
+      credential:
+        name: cloud-credentials
+        key: cloud
+      config:
+        region: us-east-1
+        s3Url: https://storage-s3.lan.example.com:8333
+        s3ForcePathStyle: "true"
+
+credentials:
+  useSecret: true
+  ***REMOVED*** Pre-existing Secret (key `cloud`), created manually, see secrets/.
+  existingSecret: cloud-credentials
+
+***REMOVED*** Init containers to add to the Velero deployment's pod spec. At least one plugin provider image is required.
+***REMOVED*** If the value is a string then it is evaluated as a template.
+initContainers:
+  - name: velero-plugin-for-aws
+    image: velero/velero-plugin-for-aws:v1.14.2
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+      - mountPath: /target
+        name: plugins
+
+***REMOVED*** Modest sizing for a 3-node homelab. Velero + Kopia are memory-hungry on
+***REMOVED*** larger backups; bump if backups fail with OOMKilled.
+resources:
+  requests:
+    cpu: 250m
+    memory: 256Mi
+  limits:
+    memory: 1Gi
+
+nodeAgent:
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      memory: 1Gi
+
+***REMOVED*** When true, a Helm post-delete hook removes all Velero CRDs on uninstall
+***REMOVED*** (which also deletes every Backup/Schedule/BSL object). Keep false unless
+***REMOVED*** you intend a full teardown.
+cleanUpCRDs: false
+
+***REMOVED*** Metrics scraped by the existing observability stack if desired later.
+metrics:
+  enabled: true

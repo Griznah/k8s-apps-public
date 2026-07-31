@@ -1,0 +1,12 @@
+***REMOVED*** https://www.talos.dev/v1.12/kubernetes-guides/configuration/deploy-metrics-server/
+resources:
+  - resources/namespace.yaml ***REMOVED*** https://github.com/argoproj/argo-cd/issues/11625***REMOVED***issuecomment-1741915734
+
+helmCharts:
+  - name: metrics-server
+    repo: https://kubernetes-sigs.github.io/metrics-server/
+    version: 3.13.1 ***REMOVED*** https://artifacthub.io/packages/helm/metrics-server/metrics-server?modal=changelog
+    releaseName: metrics-server
+    namespace: metrics-server
+    valuesFile: values.yaml
+    includeCRDs: true

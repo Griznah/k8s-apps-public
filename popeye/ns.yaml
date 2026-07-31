@@ -1,0 +1,6 @@
+***REMOVED*** Create Namespace
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: popeye

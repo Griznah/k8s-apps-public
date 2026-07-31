@@ -1,0 +1,25 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMServiceScrape
+metadata:
+  name: kube-apiserver
+  namespace: observability
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  ***REMOVED*** The in-cluster `kubernetes` Service (default ns) fronts the API server.
+  ***REMOVED*** Provides apiserver_*, rest_client_*, workqueue_*, aggregator_* metrics
+  ***REMOVED*** for the k8s-system-api-server dashboard. vmagent's ClusterRole already
+  ***REMOVED*** grants get on /metrics nonResourceURLs.
+  selector:
+    matchLabels:
+      component: apiserver
+  namespaceSelector:
+    matchNames:
+      - default
+  endpoints:
+    - port: https            ***REMOVED*** default/kubernetes Service port name (443 -> 6443)
+      scheme: https
+      interval: 30s
+      bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+      tlsConfig:
+        insecureSkipVerify: true

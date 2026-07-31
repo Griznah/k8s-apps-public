@@ -1,0 +1,159 @@
+authentication:
+  enabled: false
+  mutual:
+    spire:
+      enabled: false
+      install:
+        server:
+          dataStorage:
+            storageClass: cilium-spire-sc
+autoDirectNodeRoutes: true
+bgpControlPlane:
+  enabled: false
+bpf:
+  lbModeAnnotation: true
+  masquerade: true
+cgroup:
+  autoMount:
+    enabled: false
+  hostRoot: /sys/fs/cgroup
+cluster:
+  id: 1
+  name: bifrost
+clustermesh:
+  apiserver:
+    metrics:
+      enabled: true
+      port: 9962
+      serviceMonitor:
+        enabled: true
+dashboards:
+  enabled: true
+envoy:
+  ***REMOVED*** Lock the standalone cilium-envoy DaemonSet on. 1.20 defaults envoy.enabled=true
+  ***REMOVED*** for new installs anyway, but make it explicit so a future default flip can't
+  ***REMOVED*** silently remove the per-node Envoy data plane that gatewayAPI/l7 rely on.
+  enabled: true
+  prometheus:
+    enabled: true
+    port: "9964"
+    serviceMonitor:
+      enabled: true
+  securityContext:
+    capabilities:
+      envoy:
+      - NET_ADMIN
+      - PERFMON
+      - BPF
+      keepCapNetBindService: true
+extraConfig:
+  proxy-stream-idle-timeout-seconds: "3600"
+gatewayAPI:
+  enableAlpn: true
+  enableAppProtocol: true
+  enabled: true
+hubble:
+  enabled: true
+  metrics:
+    dashboards:
+      enabled: true
+    enableOpenMetrics: true
+    enabled:
+    - dns
+    - drop
+    - tcp
+    - flow
+    - port-distribution
+    - icmp
+    - httpV2:exemplars=true;labelsContext=source_ip,source_namespace,source_workload,destination_ip,destination_namespace,destination_workload,traffic_direction;sourceContext=workload-name|reserved-identity;destinationContext=workload-name|reserved-identity
+    port: 9965
+    serviceMonitor:
+      enabled: true
+  relay:
+    enabled: true
+    prometheus:
+      enabled: true
+      port: 9966
+      serviceMonitor:
+        enabled: true
+    rollOutPods: true
+  tls:
+    auto:
+      method: cronJob
+  ui:
+    enabled: true
+    rollOutPods: true
+ingressController:
+  enabled: false
+ipam:
+  mode: kubernetes
+  multiPoolPreAllocation: ""
+ipv4NativeRoutingCIDR: 10.244.0.0/16
+k8sServiceHost: localhost
+k8sServicePort: 7445
+kubeProxyReplacement: true
+l2announcements:
+  ***REMOVED*** Must be true: L2 announcements publish the gateway VIPs (.211/.201) and the
+  ***REMOVED*** qBittorrent VIP (.202) to the LAN. Previously toggled out-of-band in
+  ***REMOVED*** cilium-config, which a `helm upgrade` re-renders away — driven here so it
+  ***REMOVED*** survives upgrades.
+  enabled: true
+loadBalancer:
+  algorithm: maglev
+  dsrDispatch: opt
+  l7:
+    backend: envoy
+  mode: snat
+  standalone: true
+operator:
+  dashboards:
+    enabled: true
+  prometheus:
+    enabled: true
+    metricsService: true
+    port: 9963
+    serviceMonitor:
+      enabled: true
+  replicas: 2
+  resources:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 50m
+      memory: 128Mi
+  rollOutPods: true
+prometheus:
+  enabled: true
+  metricsService: true
+  port: 9962
+  serviceMonitor:
+    enabled: true
+    trustCRDsExist: true
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 200m
+    memory: 512Mi
+rollOutCiliumPods: true
+routingMode: native
+securityContext:
+  capabilities:
+    ciliumAgent:
+    - CHOWN
+    - KILL
+    - NET_ADMIN
+    - NET_RAW
+    - IPC_LOCK
+    - SYS_ADMIN
+    - SYS_RESOURCE
+    - DAC_OVERRIDE
+    - FOWNER
+    - SETGID
+    - SETUID
+    cleanCiliumState:
+    - NET_ADMIN
+    - SYS_ADMIN
+    - SYS_RESOURCE

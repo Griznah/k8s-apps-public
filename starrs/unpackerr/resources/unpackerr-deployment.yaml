@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: starrs
+  name: unpackerr
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unpackerr
+  template:
+    metadata:
+      labels:
+        app: unpackerr
+    spec:
+      containers:
+        - name: unpackerr
+          envFrom:
+            - configMapRef:
+                name: unpackerr-cm
+          image: unpackerr-image ***REMOVED*** Controlled by Kustomize
+          resources:
+            limits:
+              memory: 4Gi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+          volumeMounts:
+            - name: nfs-storage-dump-qbt
+              mountPath: /dump/qbt
+            - name: nfs-storage-dump
+              mountPath: /dump/rtor/comp
+      volumes:
+        - name: nfs-storage-dump
+          nfs:
+            path: /dump/rtor/comp
+            server: 10.0.250.200
+            readOnly: false
+        - name: nfs-storage-dump-qbt
+          nfs:
+            path: /dump/qbt
+            server: 10.0.250.200
+            readOnly: false
+      securityContext:
+        runAsUser: 210102
+        runAsGroup: 210101
+        fsGroup: 210101

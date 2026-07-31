@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: absa-ac-dev
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+  namespace: absa-ac-dev
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: storage-fast
+  volumeName: pvc-4476e0b1-3b88-4123-923f-bef2b6ef8d70  ***REMOVED*** migrated from sleipnir (absa-ac-dev)
