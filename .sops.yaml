@@ -3,6 +3,12 @@
 ***REMOVED*** Decrypt:  sops -d <file>
 ***REMOVED*** Edit:     sops <file>    (opens $EDITOR, re-encrypts on save)
 ***REMOVED*** CLI encrypt: sops -e <file>
+***REMOVED***
+***REMOVED*** Two recipients per rule:
+***REMOVED***   - operational key (age1kvjm0…): daily use, lives in ~/.config/sops/age/keys.txt
+***REMOVED***   - recovery key   (age1sv2hq…): offline backup, lets you rotate the operational
+***REMOVED***     key without blind re-encryption. Lives in keys-recovery.txt (outside the repo).
+***REMOVED*** After changing recipients here, refresh existing files:  sops updatekeys -y <file>
 
 creation_rules:
   ***REMOVED*** K8s Secrets (data/stringData) — argo, security, observability, network dirs
@@ -11,6 +17,7 @@ creation_rules:
     key_groups:
       - age:
           - age1kvjm0fp0gzylnkz6r7punejtqfq8rvzsjhaptwu2ae47nvq2sceqc4rr8z
+          - age1sv2hqfdmfuzsp4d6hxzwrplgzggepms2m3ch9em0f5wrk0wc73gqs7w5nx
 
   ***REMOVED*** ConfigMaps with sensitive values — div/absa-ac*, starrs/unpackerr
   - path_regex: ^(div|starrs).*/.*(cm|configmap)\.yaml$
@@ -18,6 +25,7 @@ creation_rules:
     key_groups:
       - age:
           - age1kvjm0fp0gzylnkz6r7punejtqfq8rvzsjhaptwu2ae47nvq2sceqc4rr8z
+          - age1sv2hqfdmfuzsp4d6hxzwrplgzggepms2m3ch9em0f5wrk0wc73gqs7w5nx
 
   ***REMOVED*** Encrypted files in secrets/ dirs — encrypt only data and stringData fields
   - path_regex: ^.*/secrets/.*\.yaml$
@@ -25,9 +33,11 @@ creation_rules:
     key_groups:
       - age:
           - age1kvjm0fp0gzylnkz6r7punejtqfq8rvzsjhaptwu2ae47nvq2sceqc4rr8z
+          - age1sv2hqfdmfuzsp4d6hxzwrplgzggepms2m3ch9em0f5wrk0wc73gqs7w5nx
 
   ***REMOVED*** Velero cloud credentials (raw secrets/ file, full-file encrypt; gitignored)
   - path_regex: ^backup/velero/secrets/cloud-credentials\.yaml$
     key_groups:
       - age:
           - age1kvjm0fp0gzylnkz6r7punejtqfq8rvzsjhaptwu2ae47nvq2sceqc4rr8z
+          - age1sv2hqfdmfuzsp4d6hxzwrplgzggepms2m3ch9em0f5wrk0wc73gqs7w5nx

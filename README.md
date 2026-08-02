@@ -1,6 +1,6 @@
 ***REMOVED*** k8s - Kubernetes GitOps Repository
 
-Private repository for managing a home Kubernetes cluster using GitOps principles with Argo CD.
+Repository for managing a home Kubernetes cluster using GitOps principles with Argo CD.
 
 ***REMOVED******REMOVED*** Overview
 

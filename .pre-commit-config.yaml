@@ -6,3 +6,14 @@ repos:
       - id: detect-secrets
         args: ['--baseline', '.secrets.baseline']
         exclude: package-lock\.json
+
+  ***REMOVED*** Dry-run the mirror transform; abort the commit if a token would survive
+  ***REMOVED*** into the public mirror. Runs the same transform.sh + verify.sh as CI.
+  - repo: local
+    hooks:
+      - id: mirror-sanitize-dryrun
+        name: mirror sanitize dry-run
+        entry: bash .mirror/precommit-check.sh
+        language: system
+        pass_filenames: false
+        always_run: true
