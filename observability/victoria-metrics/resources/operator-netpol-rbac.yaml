@@ -1,0 +1,34 @@
+***REMOVED*** Grants the VictoriaMetrics operator (ServiceAccount `victoria-metrics-operator`
+***REMOVED*** in ns `observability`) list/watch on `networkpolicies`. The operator's cache
+***REMOVED*** reflector reconciles NetworkPolicy objects (used by VMAuth/VMUser for traffic
+***REMOVED*** isolation), but the chart's ClusterRole `victoria-metrics-operator` only
+***REMOVED*** grants `ingresses` under networking.k8s.io — missing `networkpolicies`. The
+***REMOVED*** resulting constant 403s (~every 5s) flood logs, waste CPU under the 200m
+***REMOVED*** limit, and cascade into leader-election-renewal timeouts that crash the pod.
+***REMOVED*** Dedicated ClusterRole + binding rather than patching the chart-owned one so
+***REMOVED*** it survives every helm upgrade of victoria-metrics-operator.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: victoria-metrics-operator-netpol
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+rules:
+  - apiGroups: ["networking.k8s.io"]
+    resources: ["networkpolicies"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: victoria-metrics-operator-netpol
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: victoria-metrics-operator-netpol
+subjects:
+  - kind: ServiceAccount
+    name: victoria-metrics-operator
+    namespace: observability
