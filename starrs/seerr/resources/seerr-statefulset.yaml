@@ -32,7 +32,6 @@ spec:
                 name: seerr-cm
           ports:
             - containerPort: 5055
-              hostPort: 5055
               protocol: TCP
           volumeMounts:
             - name: config
