@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: seerr
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+spec:
+  replicas: 1
+  serviceName: seerr
+  selector:
+    matchLabels:
+      app: seerr
+  template:
+    metadata:
+      annotations:
+        backup.velero.io/backup-volumes: config
+      labels:
+        name: seerr
+        app: seerr
+        part-of: starrs
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 210101
+        fsGroup: 210101
+        fsGroupChangePolicy: OnRootMismatch
+      containers:
+        - name: seerr
+          image: seerr-image
+          envFrom:
+            - configMapRef:
+                name: seerr-cm
+          ports:
+            - containerPort: 5055
+              hostPort: 5055
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /app/config
+          resources:
+            limits:
+              memory: 2Gi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: seerr-config
