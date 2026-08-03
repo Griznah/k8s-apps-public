@@ -61,8 +61,8 @@ spec:
             pod-security.kubernetes.io/warn: privileged
           annotations:
             argocd.argoproj.io/sync-wave: "-10"
-        ***REMOVED*** automated:                                  ***REMOVED*** disabled for Overseerr→Seerr migration (over-to-seerr.md)
-          ***REMOVED*** selfHeal: true
+        automated:
+          selfHeal: true
         syncOptions:
           - CreateNamespace=true
         
