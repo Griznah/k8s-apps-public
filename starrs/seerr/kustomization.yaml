@@ -11,4 +11,4 @@ namespace: starrs
 images:
 - name: seerr-image
   newName: ghcr.io/seerr-team/seerr
-  newTag: v3.4.0 ***REMOVED*** https://github.com/seerr-team/seerr/releases
+  newTag: v3.4.1 ***REMOVED*** https://github.com/seerr-team/seerr/releases
