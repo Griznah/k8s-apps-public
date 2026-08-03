@@ -33,7 +33,6 @@ spec:
               memory: 1024Mi
           ports:
             - containerPort: 8989
-              hostPort: 8989
               protocol: TCP
           volumeMounts:
             - name: config
