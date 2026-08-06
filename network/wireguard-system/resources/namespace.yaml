@@ -1,0 +1,12 @@
+***REMOVED*** Create Namespace
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: wireguard-system
+  annotations:
+    argocd.argoproj.io/sync-wave: "-10"
+  labels:
+    name: wireguard-system
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/audit: privileged
+    pod-security.kubernetes.io/warn: privileged

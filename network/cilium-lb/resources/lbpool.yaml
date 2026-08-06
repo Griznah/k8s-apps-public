@@ -11,10 +11,11 @@ metadata:
 ***REMOVED***
 ***REMOVED*** Note: .211 is deliberately omitted from this pool's blocks so no non-gateway
 ***REMOVED*** service can accidentally claim it.
-***REMOVED*** WireGuard (.200) is OUT OF SCOPE for bifrost (rolled back to sleipnir):
-***REMOVED*** the bryopsida wireguard-chart hardcodes legacy `iptables MASQUERADE` in
-***REMOVED*** PostUp, which fails on Cilium kube-proxy-replacement nodes (iptable_nat
-***REMOVED*** module never loaded). See combined-plan.md §11.
+***REMOVED*** WireGuard (.200): bryopsida chart's wg0.conf template hardcodes legacy
+***REMOVED*** `iptables MASQUERADE` in PostUp, which fails on Cilium kube-proxy-replacement
+***REMOVED*** nodes (iptable_nat module never loaded). Worked around by overriding
+***REMOVED*** `configSecretName` with an iptables-free wg0.conf (see
+***REMOVED*** wireguard-system/resources/wg-config.yaml); pod->LAN SNAT is left to Cilium.
 spec:
   serviceSelector:
     matchExpressions:
@@ -26,10 +27,11 @@ spec:
     - start: 10.0.50.212
       stop: 10.0.50.223
     ***REMOVED*** qBittorrent torrent-port LB IP (.202). Present from bootstrap so the
-    ***REMOVED*** qbittorrent-tor Service can claim it; reclaimed from sleipnir at the
-    ***REMOVED*** qBittorrent cutover step. WireGuard .200 is NOT here — it stays on
-    ***REMOVED*** sleipnir (WireGuard out of scope for bifrost).
+    ***REMOVED*** qbittorrent-tor Service can claim it.
     - cidr: 10.0.50.202/32
+    ***REMOVED*** WireGuard LB IP (.200), pinned via lbipam.cilium.io/ips annotation on
+    ***REMOVED*** the wireguard Service.
+    - cidr: 10.0.50.200/32
 ---
 apiVersion: cilium.io/v2
 kind: CiliumLoadBalancerIPPool

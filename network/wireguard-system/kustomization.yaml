@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: wireguard-system
+
+helmCharts:
+- name: wireguard
+  namespace: wireguard-system
+  repo: https://bryopsida.github.io/wireguard-chart
+  releaseName: wireguard
+  version: 0.32.0 ***REMOVED*** https://github.com/bryopsida/wireguard-chart/releases
+  valuesFile: values.yaml
+  includeCRDs: true
+
+resources:
+- resources/namespace.yaml
+- resources/wg-config.yaml
+
+generators:
+- ksops.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true

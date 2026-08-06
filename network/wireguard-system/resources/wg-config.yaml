@@ -1,0 +1,36 @@
+***REMOVED*** WireGuard server config, supplied via chart's `configSecretName` override so
+***REMOVED*** the chart does NOT render its own wg0.conf — the chart template hardcodes an
+***REMOVED*** `iptables -t nat ... MASQUERADE` PostUp that fails on Cilium
+***REMOVED*** kube-proxy-replacement nodes (no iptable_nat module). This config keeps only
+***REMOVED*** the `wg set ... private-key` half of PostUp; pod→LAN SNAT is handled by
+***REMOVED*** Cilium (`enable-ipv4-masquerade: true`, LAN outside ipv4-native-routing-cidr).
+***REMOVED*** Contents are non-secret (PublicKey values are already plaintext in values.yaml;
+***REMOVED*** the actual private key lives in the separate SOPS `wireguard-wg` Secret).
+apiVersion: v1
+kind: Secret
+metadata:
+  name: wireguard-wg-config
+  namespace: wireguard-system
+type: Opaque
+stringData:
+  wg0.conf: |
+    [Interface]
+    Address = 10.200.0.1/24
+    ListenPort = 51820
+    PostUp = wg set wg0 private-key /etc/wireguard/privatekey
+
+    ***REMOVED*** Clients
+    [Peer]
+    ***REMOVED*** friendly_name = bombom-s22
+    PublicKey = 4VQkp7s05nGnIxmSyltGgQu1yOBnOgc0ZsF4q6Fp7QI=
+    AllowedIPs = 10.200.0.100/32
+
+    [Peer]
+    ***REMOVED*** friendly_name = bombom-tabs4
+    PublicKey = qUUrOA8Du3pqftRV8BA5/cr6RLMzJzYEg6ppotLZKlM=
+    AllowedIPs = 10.200.0.101/32
+
+    [Peer]
+    ***REMOVED*** friendly_name = satole-E20001
+    PublicKey = V68zPGIZMDhlNxbvCDn3OICurqx/1G4TYPaaAbU311k=
+    AllowedIPs = 10.200.0.102/32
