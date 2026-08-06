@@ -1,9 +1,12 @@
 ***REMOVED*** WireGuard server config, supplied via chart's `configSecretName` override so
-***REMOVED*** the chart does NOT render its own wg0.conf — the chart template hardcodes an
-***REMOVED*** `iptables -t nat ... MASQUERADE` PostUp that fails on Cilium
-***REMOVED*** kube-proxy-replacement nodes (no iptable_nat module). This config keeps only
-***REMOVED*** the `wg set ... private-key` half of PostUp; pod→LAN SNAT is handled by
-***REMOVED*** Cilium (`enable-ipv4-masquerade: true`, LAN outside ipv4-native-routing-cidr).
+***REMOVED*** the chart does NOT render its own wg0.conf (lets us pin the exact peer list).
+***REMOVED*** PostUp SNATs decrypted client traffic 10.200.0.0/24 -> pod IP via iptables-nft
+***REMOVED*** MASQUERADE INSIDE the pod netns, so egressing packets carry the pod's own IP
+***REMOVED*** and pass Cilium's endpoint source-IP validation. Without this, Cilium drops
+***REMOVED*** every client packet with "Invalid source ip" (src=client tunnel IP != pod IP).
+***REMOVED*** Requires the container to run as root+privileged (see values.yaml
+***REMOVED*** securityContext) — iptables-nft needs CAP_NET_ADMIN + uid 0. Talos kernel has
+***REMOVED*** nf_tables; the legacy ip_tables module isn't needed.
 ***REMOVED*** Contents are non-secret (PublicKey values are already plaintext in values.yaml;
 ***REMOVED*** the actual private key lives in the separate SOPS `wireguard-wg` Secret).
 apiVersion: v1
@@ -17,7 +20,8 @@ stringData:
     [Interface]
     Address = 10.200.0.1/24
     ListenPort = 51820
-    PostUp = wg set wg0 private-key /etc/wireguard/privatekey
+    PostUp = wg set wg0 private-key /etc/wireguard/privatekey && iptables -t nat -A POSTROUTING -s 10.200.0.0/24 -o eth0 -j MASQUERADE
+    PostDown = iptables -t nat -D POSTROUTING -s 10.200.0.0/24 -o eth0 -j MASQUERADE
 
     ***REMOVED*** Clients
     [Peer]

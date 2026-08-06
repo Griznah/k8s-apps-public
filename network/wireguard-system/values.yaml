@@ -1,3 +1,16 @@
+***REMOVED*** Run the wireguard container as root + privileged so the iptables-nft
+***REMOVED*** MASQUERADE in wg0.conf PostUp works (kernel nf_tables is present on Talos;
+***REMOVED*** the old "runs as UID 1000" default made iptables fail with "Permission
+***REMOVED*** denied (you must be root)" — the real blocker, NOT a missing iptable_nat
+***REMOVED*** module). MASQUERADE SNATs decrypted client traffic 10.200.0.0/24 -> pod IP
+***REMOVED*** inside the pod netns BEFORE egress, so Cilium's endpoint source-IP
+***REMOVED*** validation (Invalid source ip DROP) passes.
+securityContext:
+  runAsNonRoot: false
+  runAsUser: 0
+  runAsGroup: 0
+  privileged: true
+
 metrics:
   enabled: true
 disruptionBudget:
