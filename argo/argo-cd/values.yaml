@@ -14,13 +14,13 @@ crds:
   keep: false
 
 global:
-  revisionHistoryLimit: 3
+  revisionHistoryLimit: 5
   addPrometheusAnnotations: true
 
 applicationSet:
   metrics:
     enabled: true
-  replicas: 2
+  replicas: 1
   resources:
     limits:
       memory: 4096Mi
@@ -31,7 +31,7 @@ applicationSet:
 controller:
   metrics:
     enabled: true
-  replicas: 2
+  replicas: 1
   resources:
     limits:
       memory: 4096Mi
@@ -66,8 +66,9 @@ redis:
       memory: 700Mi
 
 repoServer:
+  replicas: 1
   autoscaling:
-    enabled: true
+    enabled: false
     minReplicas: 2
     maxReplicas: 3
   metrics:
@@ -111,16 +112,13 @@ repoServer:
       value: /.config/sops/age/keys.txt
 
 server:
+  replicas: 2
   autoscaling:
-    enabled: true
+    enabled: false
     minReplicas: 2
     maxReplica: 3
   metrics:
     enabled: true
-    ***REMOVED***service:
-    ***REMOVED***  annotations:
-    ***REMOVED***    metallb.io/loadBalancerIPs: 10.0.50.250
-    ***REMOVED***  type: LoadBalancer
   resources:
     limits:
       memory: 128Mi
