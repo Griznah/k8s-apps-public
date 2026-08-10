@@ -23,10 +23,10 @@ spec:
           image: unpackerr-image ***REMOVED*** Controlled by Kustomize
           resources:
             limits:
-              memory: 4Gi
+              memory: 256Mi
             requests:
               cpu: 100m
-              memory: 256Mi
+              memory: 178Mi
           volumeMounts:
             - name: nfs-storage-dump-qbt
               mountPath: /dump/qbt

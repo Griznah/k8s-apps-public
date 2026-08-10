@@ -27,7 +27,7 @@ spec:
           image: prowlarr-image ***REMOVED*** lscr.io/linuxserver/prowlarr - controlled by Kustomize
           resources:
             limits:
-              memory: 2Gi
+              memory: 512Mi
             requests:
               cpu: 100m
               memory: 256Mi

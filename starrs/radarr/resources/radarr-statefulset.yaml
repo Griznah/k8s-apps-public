@@ -27,10 +27,10 @@ spec:
           image: radarr-image ***REMOVED*** lscr.io/linuxserver/radarr - controlled by Kustomize
           resources:
             limits:
-              memory: 4Gi
+              memory: 1Gi
             requests:
               cpu: 100m
-              memory: 1024Mi
+              memory: 768Mi
           ports:
             - containerPort: 7878
               protocol: TCP
