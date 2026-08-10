@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lubelogger-headless
+  namespace: lubelogger
+spec:
+  clusterIP: None
+  selector:
+    app: lubelogger
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lubelogger
+  namespace: lubelogger
+spec:
+  selector:
+    app: lubelogger
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: http
+  type: ClusterIP
