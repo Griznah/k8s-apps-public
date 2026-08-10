@@ -1,9 +1,25 @@
 ***REMOVED*** VictoriaMetrics Operator.
-***REMOVED*** Chart defaults are already correct for this cluster — only operator-pod sizing is overridden:
+***REMOVED*** Chart defaults are already correct for this cluster — overridden:
 ***REMOVED***   - crds.enabled: true / crds.cleanup.enabled: false  (CRDs not wiped on chart uninstall)
 ***REMOVED***   - rbac.create: true                                  (operator + per-operand scrape SAs/ClusterRoles)
-***REMOVED***   - admission webhooks enabled                         (self-signed certs; cert-manager not required)
+***REMOVED***   - admission webhooks enabled                         (cert below)
 ***REMOVED***   - operator.watchNamespaces: []                       (whole-cluster — needed for VMAgent discovery)
+***REMOVED***
+***REMOVED*** Admission webhook cert: cert-manager owns it (NOT chart's self-signed hook Job).
+***REMOVED*** Chart's pre-upgrade hook regenerated cert on every ArgoCD sync; raced kubelet's projected-Secret
+***REMOVED*** refresh (tls.crt vs tls.key non-atomic) → operator certwatcher exited on key/cert mismatch →
+***REMOVED*** 104 restarts in 7d, cascading to API-server pressure (25 Fail/10s webhooks).
+***REMOVED*** cert-manager writes the Secret directly → stable, no hook, no race.
+admissionWebhooks:
+  enabled: true
+  policy: Fail
+  certManager:
+    enabled: true        ***REMOVED*** chart stops deploying hook Job, deploys Issuer + Certificate CRs instead
+    issuer: {}           ***REMOVED*** chart creates its own self-signed Issuer in observability ns
+    ca:
+      duration: 43800h   ***REMOVED*** 5y
+    cert:
+      duration: 21800h   ***REMOVED*** ~2.5y
 
 resources:
   requests:
