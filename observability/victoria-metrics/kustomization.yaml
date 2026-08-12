@@ -18,5 +18,6 @@ resources:
   - resources/vmsm-kube-state-metrics.yaml
   - resources/vmsm-node-exporter.yaml
   - resources/vmsm-kubelet.yaml
+  - resources/vmsm-etcd.yaml
   - resources/vmsm-kube-apiserver.yaml
   - resources/vmpodscrape-coredns.yaml

@@ -1,0 +1,27 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMNodeScrape
+metadata:
+  name: etcd
+  namespace: observability
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  ***REMOVED*** etcd metrics: etcd_disk_wal_fsync_duration_seconds (disk write latency),
+  ***REMOVED*** etcd_disk_backend_commit_duration_seconds (bbolt commit), etcd_server_proposals_*
+  ***REMOVED*** (raft consensus health), etcd_network_peer_round_trip_time_seconds (member net),
+  ***REMOVED*** etcd_server_leader_changes_seen_total, etcd_mvcc_db_total_size_bytes, etc.
+  ***REMOVED*** Needed to diagnose raft/consensus stalls that cascade into apiserver Handler
+  ***REMOVED*** timeouts + controller leader-election churn.
+  ***REMOVED***
+  ***REMOVED*** etcd exposes a DEDICATED plaintext metrics listener on :2381
+  ***REMOVED*** (--listen-metrics-urls=http://0.0.0.0:2381), separate from the mTLS client port
+  ***REMOVED*** :2379 (which requires a client cert). So plain http, no cert/TLS/bearer needed.
+  ***REMOVED*** Scraped per control-plane node at NodeInternalIP:2381/metrics.
+  scheme: http
+  port: "2381"
+  path: /metrics
+  interval: 30s
+  selector:
+    matchExpressions:
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
