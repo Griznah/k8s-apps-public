@@ -1,0 +1,26 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMStaticScrape
+metadata:
+  name: storage-2-host
+  namespace: observability
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
+spec:
+  jobName: storage-2-host
+  ***REMOVED*** Proxmox hypervisor `storage-2` (10.0.10.250) = the host running all 3 bifrost
+  ***REMOVED*** k8s VMs + the ZFS pools (vmpool1, green) backing the VM disks / etcd data dir.
+  ***REMOVED*** node_exporter runs on storage-2 with the zfs collector enabled (~314 node_zfs_* series).
+  ***REMOVED*** External (non-cluster) host → VMStaticScrape (static target), not VMService/NodeScrape.
+  ***REMOVED***
+  ***REMOVED*** WHY: correlates HOST-side storage latency against etcd fsync spikes. Key series:
+  ***REMOVED***   - node_disk_io_time_weighted_seconds_total{device=sd[a-d]} — the 4 Samsung 870 EVO
+  ***REMOVED***     QLC SATA SSDs backing vmpool1 (their sync-flush latency is the etcd-fsync root cause).
+  ***REMOVED***   - node_zfs_dmu_tx_dmu_tx_dirty_delay / _dirty_over_max — tx throttle/dirty-pressure events.
+  ***REMOVED***   - node_zfs_zil_* — ZIL commit activity.
+  ***REMOVED*** vs. etcd_disk_wal_fsync_duration_seconds (the downstream k8s-side signal).
+  targetEndpoints:
+    - targets:
+        - 10.0.10.250:9100
+      labels:
+        node: storage-2
+        role: pve-hypervisor

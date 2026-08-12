@@ -19,5 +19,6 @@ resources:
   - resources/vmsm-node-exporter.yaml
   - resources/vmsm-kubelet.yaml
   - resources/vmsm-etcd.yaml
+  - resources/vmss-storage-2.yaml
   - resources/vmsm-kube-apiserver.yaml
   - resources/vmpodscrape-coredns.yaml
