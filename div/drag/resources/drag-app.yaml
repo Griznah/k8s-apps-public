@@ -1,0 +1,90 @@
+***REMOVED*** drag-app — FastAPI (RAG pipeline + OpenAI adapter). Connects to drag-qdrant,
+***REMOVED*** drag-llama-embed (in-cluster) and the external 27B gen box. Runs as non-root
+***REMOVED*** (uid 1001); HF models and PDFs go to PVCs under /data (fsGroup-writable), and the
+***REMOVED*** parse/embed caches land under /app (chowned to 1001 in the image).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: drag-app-config
+data:
+  QDRANT_URL: http://drag-qdrant:6333
+  LLAMA_EMBED_URL: http://drag-llama-embed:8080
+  LLAMA_GEN_URL: http://9800x3d.lan.example.com:9931
+  TORCHDYNAMO_DISABLE: "1"
+  HF_HOME: /data/hf-cache
+  PDF_DIR: /data/pdf
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: drag-hf-cache
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: proxmox-green
+  resources:
+    requests:
+      storage: 10Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: drag-pdf
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: proxmox-green
+  resources:
+    requests:
+      storage: 2Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drag-app
+spec:
+  selector: { app: drag-app }
+  ports:
+    - { name: http, port: 8000, targetPort: 8000 }
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drag-app
+  labels: { app: drag-app }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: drag-app } }
+  template:
+    metadata: { labels: { app: drag-app } }
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1001
+        fsGroup: 1001
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: app
+          image: ghcr.io/example/drag-app:latest
+          ports:
+            - { containerPort: 8000, name: http }
+          envFrom:
+            - configMapRef: { name: drag-app-config }
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: { drop: [ALL] }
+          resources:
+            ***REMOVED*** docling layout models + bge-reranker + torch live here
+            requests: { cpu: 500m, memory: 3Gi }
+            limits: { cpu: "4", memory: 10Gi }
+          volumeMounts:
+            - { name: hf-cache, mountPath: /data/hf-cache }
+            - { name: pdf, mountPath: /data/pdf }
+          readinessProbe:
+            httpGet: { path: /health, port: 8000 }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+      volumes:
+        - name: hf-cache
+          persistentVolumeClaim: { claimName: drag-hf-cache }
+        - name: pdf
+          persistentVolumeClaim: { claimName: drag-pdf }

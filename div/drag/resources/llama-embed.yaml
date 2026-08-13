@@ -1,0 +1,46 @@
+***REMOVED*** Embedding server: llama-cpp-python[server] with the Qwen3 gguf baked into the image.
+***REMOVED*** No initContainer or models PVC needed — the container is self-contained.
+apiVersion: v1
+kind: Service
+metadata:
+  name: drag-llama-embed
+spec:
+  selector: { app: drag-llama-embed }
+  ports:
+    - { name: http, port: 8080, targetPort: 8080 }
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drag-llama-embed
+  labels: { app: drag-llama-embed }
+spec:
+  replicas: 1
+  selector: { matchLabels: { app: drag-llama-embed } }
+  template:
+    metadata: { labels: { app: drag-llama-embed } }
+    spec:
+      securityContext:
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: embed
+          image: ghcr.io/example/drag-llama-embed:latest
+          ports:
+            - { containerPort: 8080, name: http }
+          env:
+            - { name: MODEL, value: /models/Qwen3-Embedding-0.6B-Q8_0.gguf }
+            - { name: HOST, value: "0.0.0.0" }
+            - { name: PORT, value: "8080" }
+            - { name: EMBEDDING, value: "True" }
+            - { name: N_GPU_LAYERS, value: "0" }
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: { drop: [ALL] }
+          resources:
+            requests: { cpu: 200m, memory: 512Mi }
+            limits: { cpu: "2", memory: 2Gi }
+          readinessProbe:
+            httpGet: { path: /v1/models, port: 8080 }
+            initialDelaySeconds: 10
+            periodSeconds: 15

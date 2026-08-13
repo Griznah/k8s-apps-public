@@ -1,0 +1,58 @@
+***REMOVED*** Qdrant — vector store (dense + server-side BM25). Single replica; data on PVC.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: drag-qdrant
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: proxmox-green
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drag-qdrant
+spec:
+  selector: { app: drag-qdrant }
+  ports:
+    - { name: http, port: 6333, targetPort: 6333 }
+    - { name: grpc, port: 6334, targetPort: 6334 }
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: drag-qdrant
+  labels: { app: drag-qdrant }
+spec:
+  serviceName: drag-qdrant
+  replicas: 1
+  selector: { matchLabels: { app: drag-qdrant } }
+  template:
+    metadata: { labels: { app: drag-qdrant } }
+    spec:
+      securityContext:
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: qdrant
+          image: docker.io/qdrant/qdrant:v1.19.0
+          ports:
+            - { containerPort: 6333, name: http }
+            - { containerPort: 6334, name: grpc }
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: { drop: [ALL] }
+          resources:
+            requests: { cpu: 100m, memory: 512Mi }
+            limits: { cpu: "1", memory: 4Gi }
+          readinessProbe:
+            httpGet: { path: /, port: 6333 }
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          volumeMounts:
+            - { name: storage, mountPath: /qdrant/storage }
+      volumes:
+        - name: storage
+          persistentVolumeClaim: { claimName: drag-qdrant }

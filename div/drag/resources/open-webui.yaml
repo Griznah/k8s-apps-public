@@ -1,0 +1,60 @@
+***REMOVED*** Open WebUI — chat frontend. Talks to drag-app over the OpenAI API (model "drag").
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: drag-webui
+spec:
+  accessModes: [ReadWriteOnce]
+  storageClassName: proxmox-green
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: drag-webui
+spec:
+  selector: { app: drag-webui }
+  ports:
+    - { name: http, port: 8080, targetPort: 8080 }
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: drag-webui
+  labels: { app: drag-webui }
+spec:
+  serviceName: drag-webui
+  replicas: 1
+  selector: { matchLabels: { app: drag-webui } }
+  template:
+    metadata: { labels: { app: drag-webui } }
+    spec:
+      securityContext:
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: webui
+          image: ghcr.io/open-webui/open-webui:v0.11.0
+          ports:
+            - { containerPort: 8080, name: http }
+          env:
+            - { name: OPENAI_API_BASE_URL, value: http://drag-app:8000/v1 }
+            - { name: OPENAI_API_KEY, value: dummy }
+            - { name: ENABLE_RAG_WEB_SEARCH, value: "false" }
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities: { drop: [ALL] }
+          resources:
+            requests: { cpu: 100m, memory: 512Mi }
+            limits: { cpu: "1", memory: 2Gi }
+          volumeMounts:
+            - { name: data, mountPath: /app/backend/data }
+          readinessProbe:
+            httpGet: { path: /, port: 8080 }
+            initialDelaySeconds: 15
+            periodSeconds: 15
+      volumes:
+        - name: data
+          persistentVolumeClaim: { claimName: drag-webui }
