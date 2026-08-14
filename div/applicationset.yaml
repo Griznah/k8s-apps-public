@@ -37,7 +37,6 @@ spec:
           - path: "div/app-beta"
           - path: "div/absa-ac-dev"
           - path: "div/absa-ac"
-          - path: "div/drag"
           - path: "div/lubelogger"
           - path: "div/metrics-server"
           - exclude: true
@@ -62,4 +61,23 @@ spec:
       syncPolicy:
         automated:
           selfHeal: true
+---
+***REMOVED*** drag: manual sync — image is :latest (no push tag discipline yet), auto-sync/
+***REMOVED*** selfHeal on repo drift restarts pods mid-ingest (48min embed runs). Sync by hand.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: drag
+  namespace: argo-system
+  labels:
+    app-group: div
+spec:
+  project: div
+  source:
+    repoURL: git@github.com:Griznah/k8s-apps.git
+    targetRevision: main
+    path: div/drag
+  destination:
+    server: https://kubernetes.default.svc
+  revisionHistoryLimit: 5
 
