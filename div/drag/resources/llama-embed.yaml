@@ -40,9 +40,11 @@ spec:
           resources:
             requests: { cpu: 200m, memory: 512Mi }
             limits: { cpu: "2", memory: 2Gi }
-          readinessProbe:
+          ***REMOVED*** startupProbe only — llama-server is CPU-saturated during ingest embed
+          ***REMOVED*** batches and fails any liveness/readiness probe; readiness would pull it
+          ***REMOVED*** from endpoints mid-upload and kill the upload with ConnectError.
+          startupProbe:
             httpGet: { path: /v1/models, port: 8080 }
-            initialDelaySeconds: 10
-            periodSeconds: 15
+            periodSeconds: 5
             timeoutSeconds: 5
-            failureThreshold: 5
+            failureThreshold: 30
