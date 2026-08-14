@@ -12,3 +12,6 @@ spec:
   endpoints:
     - port: http          ***REMOVED*** kube-state-metrics Service port (8080) is named "http"
       interval: 30s
+      honorLabels: true   ***REMOVED*** KSM metrics carry namespace/pod for *other* objects; without this vmagent's
+                          ***REMOVED*** own target labels (namespace=observability, pod=kube-state-metrics-*)
+                          ***REMOVED*** clobber them (renamed exported_*) and every kube_* series looks like observability
