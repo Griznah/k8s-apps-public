@@ -37,3 +37,8 @@ sidecar:
     ***REMOVED*** annotation lands in that folder; otherwise it falls back to "General".
     folderAnnotation: grafana_folder
     defaultFolderName: General
+    ***REMOVED*** REQUIRED with folderAnnotation: the sidecar encodes the folder as a
+    ***REMOVED*** subdirectory of defaultFolderName; the provider must replicate that
+    ***REMOVED*** structure as folders, else every dashboard lands top-level.
+    provider:
+      foldersFromFilesStructure: true
