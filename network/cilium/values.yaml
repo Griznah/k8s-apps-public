@@ -100,10 +100,12 @@ l2announcements:
   enabled: true
 loadBalancer:
   algorithm: maglev
+  ***REMOVED*** hybrid = DSR for TCP (client src IP preserved; qbt/libtorrent needs non-RFC1918
+  ***REMOVED*** peer src to count incoming conns), SNAT for UDP (WireGuard LB keeps working)
+  mode: hybrid
   dsrDispatch: opt
   l7:
     backend: envoy
-  mode: snat
   standalone: true
 operator:
   dashboards:
