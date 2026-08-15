@@ -13,3 +13,8 @@ helmCharts:
     namespace: kube-system
     valuesFile: values.yaml
     includeCRDs: true
+
+resources:
+  ***REMOVED*** Hubble UI HTTPRoute (backend svc/hubble-ui lives in this namespace).
+  ***REMOVED*** Note: cilium-cni is manual-sync — sync after merge to expose the UI.
+  - resources/hubble-ui-gateway-route.yaml

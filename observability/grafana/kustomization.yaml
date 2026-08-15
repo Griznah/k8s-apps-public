@@ -42,6 +42,17 @@ configMapGenerator:
       - dashboards/kubernetes/k8s-views-pods.json
       - dashboards/kubernetes/k8s-system-api-server.json
       - dashboards/kubernetes/k8s-system-coredns.json
+  - name: cilium-dashboards
+    files:
+      ***REMOVED*** Upstream cilium helm chart 1.20.0 (install/kubernetes/cilium/files/*/dashboards/).
+      ***REMOVED*** DS_PROMETHEUS datasource var filters type=prometheus → resolves to
+      ***REMOVED*** VictoriaMetrics, same as the dotdc dashboards. No JSON edits.
+      - dashboards/cilium/cilium-dashboard.json
+      - dashboards/cilium/cilium-operator-dashboard.json
+      - dashboards/cilium/hubble-dashboard.json
+      - dashboards/cilium/hubble-dns-namespace.json
+      - dashboards/cilium/hubble-l7-http-metrics-by-workload.json
+      - dashboards/cilium/hubble-network-overview-namespace.json
 
 ***REMOVED*** configMapGenerator can't set per-entry annotations, so patch the stable
 ***REMOVED*** (unhashed) ConfigMap names to drive the Grafana `grafana_folder` annotation.
@@ -66,3 +77,13 @@ patches:
         name: kubernetes-dashboards
         annotations:
           grafana_folder: Kubernetes
+  - target:
+      kind: ConfigMap
+      name: cilium-dashboards
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: cilium-dashboards
+        annotations:
+          grafana_folder: Cilium
