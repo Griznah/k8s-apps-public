@@ -19,8 +19,12 @@ spec:
       name: consolidated-gateway
       namespace: gateway
   hostnames:
-    - argocd.k8s.example.com
-    - argocd.example.com
+    ***REMOVED*** Dedicated host: *.k8s.example.com wildcard DNS already resolves this to
+    ***REMOVED*** the gateway VIP (.201) — no DNS change. Host-level split avoids the
+    ***REMOVED*** route-kind precedence fight with the `argocd` HTTPRoute (older route
+    ***REMOVED*** wins on overlapping hostnames; deleting/recreating to flip precedence
+    ***REMOVED*** would be fragile). Cert example-net-tls covers *.k8s.example.com.
+    - argocd-grpc.k8s.example.com
   rules:
     - backendRefs:
         - group: ''
