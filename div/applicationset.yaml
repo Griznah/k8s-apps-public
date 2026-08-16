@@ -39,6 +39,7 @@ spec:
           - path: "div/absa-ac"
           - path: "div/lubelogger"
           - path: "div/metrics-server"
+          - path: "div/open-webui"
           - exclude: true
             path: "div/*.disabled"
   syncPolicy:
