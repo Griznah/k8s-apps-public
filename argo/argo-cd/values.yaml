@@ -124,6 +124,11 @@ server:
     enabled: false
     minReplicas: 2
     maxReplica: 3
+  service:
+    ***REMOVED*** Backend leg for native gRPC (argocd CLI) via GRPCRoute -> port 443.
+    ***REMOVED*** Envoy then speaks plaintext HTTP/2 to argocd-server:8080 (cmux h2=gRPC).
+    ***REMOVED*** Port 80 (UI/REST) stays HTTP/1.1 — argocd's http mux is h1-only.
+    servicePortHttpsAppProtocol: kubernetes.io/h2c
   metrics:
     enabled: true
   resources:

@@ -2,6 +2,7 @@ resources:
   - resources/namespace.yaml
   - resources/servicemonitors.yaml
   - resources/argocd-gateway-route.yaml ***REMOVED*** consolidated-gateway HTTPRoute (was network/traefik/resources/argo-gateway-route.yaml)
+  - resources/argocd-grpc-route.yaml ***REMOVED*** GRPCRoute: argocd CLI native gRPC -> svc https port (h2c)
 
 generators:
   - ksops.yaml
@@ -9,23 +10,6 @@ generators:
 generatorOptions:
   disableNameSuffixHash: true
 
-***REMOVED*** Backend leg of the gRPC path for `argocd login argocd.k8s.example.com`:
-***REMOVED*** cilium gatewayAPI.enableAppProtocol + this appProtocol makes Envoy speak
-***REMOVED*** plaintext HTTP/2 to argocd-server:8080 (cmux serves h2 + h1 there). Without
-***REMOVED*** it Envoy->backend is HTTP/1.1 and gRPC streams die (404 on session create).
-***REMOVED*** NOTE: patch item MUST carry the list merge key (port), else kustomize
-***REMOVED*** strategic-merge replaces the whole ports list with an empty one.
-patches:
-  - target:
-      kind: Service
-      name: argocd-server
-    ***REMOVED*** JSON6902, not strategic merge: kustomize SM mishandles the ports list on
-    ***REMOVED*** helm-generated resources (empty-list wipe). Index 0 = port "http" (chart
-    ***REMOVED*** renders http before https; chart pinned 10.3.3).
-    patch: |-
-      - op: add
-        path: /spec/ports/0/appProtocol
-        value: kubernetes.io/h2c
 
 helmCharts:
 - name: argo-cd
