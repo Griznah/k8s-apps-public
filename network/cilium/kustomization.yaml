@@ -21,3 +21,7 @@ resources:
   ***REMOVED*** Converter-generated from chart ServiceMonitor; committed so live object
   ***REMOVED*** isn't extraneous (converter owns spec — see file header).
   - resources/cilium-agent-vmservicescrape.yaml
+  - resources/cilium-envoy-vmservicescrape.yaml
+  - resources/cilium-operator-vmservicescrape.yaml
+  - resources/hubble-vmservicescrape.yaml
+  - resources/hubble-relay-vmservicescrape.yaml

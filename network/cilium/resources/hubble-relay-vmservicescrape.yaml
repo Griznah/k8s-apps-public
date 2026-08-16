@@ -1,0 +1,32 @@
+{
+  "apiVersion": "operator.victoriametrics.com/v1beta1",
+  "kind": "VMServiceScrape",
+  "metadata": {
+    "name": "hubble-relay",
+    "namespace": "kube-system",
+    "labels": {
+      "app.kubernetes.io/name": "hubble-relay"
+    }
+  },
+  "spec": {
+    "attach_metadata": {},
+    "endpoints": [
+      {
+        "attach_metadata": {},
+        "interval": "10s",
+        "path": "/metrics",
+        "port": "metrics"
+      }
+    ],
+    "namespaceSelector": {
+      "matchNames": [
+        "kube-system"
+      ]
+    },
+    "selector": {
+      "matchLabels": {
+        "k8s-app": "hubble-relay"
+      }
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "apiVersion": "operator.victoriametrics.com/v1beta1",
+  "kind": "VMServiceScrape",
+  "metadata": {
+    "name": "cilium-envoy",
+    "namespace": "kube-system",
+    "labels": {
+      "app.kubernetes.io/name": "cilium-envoy"
+    }
+  },
+  "spec": {
+    "attach_metadata": {},
+    "endpoints": [
+      {
+        "attach_metadata": {},
+        "honorLabels": true,
+        "interval": "10s",
+        "path": "/metrics",
+        "port": "envoy-metrics",
+        "relabelConfigs": [
+          {
+            "action": "replace",
+            "replacement": "${1}",
+            "sourceLabels": [
+              "__meta_kubernetes_pod_node_name"
+            ],
+            "targetLabel": "node"
+          }
+        ]
+      }
+    ],
+    "namespaceSelector": {
+      "matchNames": [
+        "kube-system"
+      ]
+    },
+    "selector": {
+      "matchLabels": {
+        "k8s-app": "cilium-envoy"
+      }
+    },
+    "targetLabels": [
+      "k8s-app"
+    ]
+  }
+}

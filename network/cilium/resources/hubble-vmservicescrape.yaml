@@ -1,0 +1,44 @@
+{
+  "apiVersion": "operator.victoriametrics.com/v1beta1",
+  "kind": "VMServiceScrape",
+  "metadata": {
+    "name": "hubble",
+    "namespace": "kube-system",
+    "labels": {
+      "app.kubernetes.io/name": "hubble"
+    }
+  },
+  "spec": {
+    "attach_metadata": {},
+    "endpoints": [
+      {
+        "attach_metadata": {},
+        "honorLabels": true,
+        "interval": "10s",
+        "path": "/metrics",
+        "port": "hubble-metrics",
+        "relabelConfigs": [
+          {
+            "action": "replace",
+            "replacement": "${1}",
+            "sourceLabels": [
+              "__meta_kubernetes_pod_node_name"
+            ],
+            "targetLabel": "node"
+          }
+        ],
+        "scheme": "http"
+      }
+    ],
+    "namespaceSelector": {
+      "matchNames": [
+        "kube-system"
+      ]
+    },
+    "selector": {
+      "matchLabels": {
+        "k8s-app": "hubble"
+      }
+    }
+  }
+}
