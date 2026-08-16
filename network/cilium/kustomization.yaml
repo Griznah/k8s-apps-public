@@ -18,3 +18,6 @@ resources:
   ***REMOVED*** Hubble UI HTTPRoute (backend svc/hubble-ui lives in this namespace).
   ***REMOVED*** Note: cilium-cni is manual-sync — sync after merge to expose the UI.
   - resources/hubble-ui-gateway-route.yaml
+  ***REMOVED*** Converter-generated from chart ServiceMonitor; committed so live object
+  ***REMOVED*** isn't extraneous (converter owns spec — see file header).
+  - resources/cilium-agent-vmservicescrape.yaml
