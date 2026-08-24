@@ -65,20 +65,20 @@ spec:
 ---
 ***REMOVED*** drag: manual sync — image is :latest (no push tag discipline yet), auto-sync/
 ***REMOVED*** selfHeal on repo drift restarts pods mid-ingest (48min embed runs). Sync by hand.
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  name: drag
-  namespace: argo-system
-  labels:
-    app-group: div
-spec:
-  project: div
-  source:
-    repoURL: git@github.com:Griznah/k8s-apps.git
-    targetRevision: main
-    path: div/drag
-  destination:
-    server: https://kubernetes.default.svc
-  revisionHistoryLimit: 5
+***REMOVED***apiVersion: argoproj.io/v1alpha1
+***REMOVED***kind: Application
+***REMOVED***metadata:
+***REMOVED***  name: drag
+***REMOVED***  namespace: argo-system
+***REMOVED***  labels:
+***REMOVED***    app-group: div
+***REMOVED***spec:
+***REMOVED***  project: div
+***REMOVED***  source:
+***REMOVED***    repoURL: git@github.com:Griznah/k8s-apps.git
+***REMOVED***    targetRevision: main
+***REMOVED***    path: div/drag
+***REMOVED***  destination:
+***REMOVED***    server: https://kubernetes.default.svc
+***REMOVED***  revisionHistoryLimit: 5
 
