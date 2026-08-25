@@ -20,6 +20,14 @@ certgen:
   ***REMOVED*** Self-clean hubble certgen Jobs (spec-hash job names change per chart bump;
   ***REMOVED*** without TTL old Jobs linger as live-only orphans -> eternal OutOfSync).
   ttlSecondsAfterFinished: 3600
+  ***REMOVED*** One-shot Job IS in git manifests; TTL alone would make cilium-cni
+  ***REMOVED*** OutOfSync(Missing) once the TTL fires (ArgoCD can't track TTL-deleted jobs).
+  ***REMOVED*** PostSync hook keeps it out of the diff; ArgoCD deletes it on success.
+  ***REMOVED*** Idempotent cert regen per manual sync; CronJob renews independently.
+  annotations:
+    job:
+      argocd.argoproj.io/hook: PostSync
+      argocd.argoproj.io/hook-delete-policy: HookSucceeded
 cluster:
   id: 1
   name: bifrost

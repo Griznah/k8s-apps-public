@@ -65,15 +65,6 @@ spec:
         syncOptions:
           - CreateNamespace=true
       revisionHistoryLimit: 5
-  ignoreDifferences:
-    ***REMOVED*** VM operator's prometheus-converter copies the source ServiceMonitor's
-    ***REMOVED*** annotations (incl. ArgoCD's ServiceMonitor tracking-id) onto the
-    ***REMOVED*** generated VMServiceScrape, fighting our own tracking-id stamp.
-    ***REMOVED*** Specs stay diffed — converter spec drift still surfaces.
-    - group: operator.victoriametrics.com
-      kind: VMServiceScrape
-      jsonPointers:
-        - /metadata/annotations/argocd.argoproj.io~1tracking-id
 ---
 ***REMOVED*** Cilium is the cluster CNI and lives in kube-system, so it can't use the
 ***REMOVED*** path-derived destination above. Defined explicitly here: rendered via
@@ -97,6 +88,15 @@ spec:
     server: https://kubernetes.default.svc
     namespace: kube-system
   revisionHistoryLimit: 5
+  ignoreDifferences:
+    ***REMOVED*** VM operator's prometheus-converter copies the source ServiceMonitor's
+    ***REMOVED*** annotations (incl. ArgoCD's ServiceMonitor tracking-id) onto the
+    ***REMOVED*** generated VMServiceScrape, fighting our own tracking-id stamp.
+    ***REMOVED*** Specs stay diffed — converter spec drift still surfaces.
+    - group: operator.victoriametrics.com
+      kind: VMServiceScrape
+      jsonPointers:
+        - /metadata/annotations/argocd.argoproj.io~1tracking-id
   syncPolicy:
     syncOptions:
       - ServerSideApply=true
