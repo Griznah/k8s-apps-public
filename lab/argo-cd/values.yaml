@@ -78,7 +78,9 @@ repoServer:
     - name: sops-age
       secret:
         secretName: sops-age-key
-  extraEnv:
+  ***REMOVED*** Chart v10 key is `env` (not extraEnv — that's dead legacy from chart 9.x;
+  ***REMOVED*** bifrost's copy is stale config too).
+  env:
     - name: XDG_CONFIG_HOME
       value: /home/argocd/.config
     - name: SOPS_AGE_KEY_FILE
