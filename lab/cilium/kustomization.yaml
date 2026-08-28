@@ -21,3 +21,15 @@ resources:
   - ../../network/cilium/resources/cilium-operator-vmservicescrape.yaml
   - ../../network/cilium/resources/hubble-vmservicescrape.yaml
   - ../../network/cilium/resources/hubble-relay-vmservicescrape.yaml
+
+patches:
+  ***REMOVED*** ponytail: single node — chart's 2 operator replicas + anti-affinity leave
+  ***REMOVED*** one Pending forever. requests/divergence ceiling: lab tests versions, not
+  ***REMOVED*** capacity. Revisit only if lab grows a second node.
+  - target:
+      kind: Deployment
+      name: cilium-operator
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1
