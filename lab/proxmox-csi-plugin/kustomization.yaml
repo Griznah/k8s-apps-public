@@ -4,6 +4,7 @@ kind: Kustomization
 ***REMOVED*** Proxmox API Secret is created manually on lab too (same token as bifrost).
 ***REMOVED*** vmsingle's PVC needs the storage-fast StorageClass this renders.
 resources:
+  - namespace.yaml
   - ../../storage/proxmox-csi-plugin/resources/storageclass.yaml
 
 helmCharts:
