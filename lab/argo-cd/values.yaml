@@ -1,7 +1,9 @@
 configs:
   cm:
     ***REMOVED*** --enable-alpha-plugins --enable-exec required for the ksops exec plugin to load (see repoServer below)
-    kustomize.buildOptions: "--enable-helm --enable-alpha-plugins --enable-exec"
+    ***REMOVED*** load-restrictor none: lab wrappers reference parent app dirs across
+    ***REMOVED*** directories (../../<dir>/<app>) — ArgoCD v3 defaults to roots-only.
+    kustomize.buildOptions: "--enable-helm --enable-alpha-plugins --enable-exec --load-restrictor LoadRestrictionsNone"
     users.anonymous.enabled: "false"
     timeout.reconciliation: "60s"
   params:
