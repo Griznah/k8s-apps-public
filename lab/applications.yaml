@@ -1,0 +1,140 @@
+***REMOVED*** Lab cluster apps — explicit list, NO ApplicationSet (deliberate: nothing
+***REMOVED*** sneaks into the lab mirror without showing up as a diff here).
+***REMOVED*** ⚠ Edits to this file need a manual `kubectl --kubeconfig ~/.kube/config-lab
+***REMOVED*** apply -f lab/applications.yaml` — the Applications live in-cluster only.
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: lab
+  namespace: argo-system
+spec:
+  sourceRepos:
+    - "*"
+  destinations:
+    - namespace: "*"
+      server: "*"
+  clusterResourceWhitelist:
+    - group: "*"
+      kind: "*"
+  orphanedResources:
+    warn: false
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: lab-argo-cd
+  namespace: argo-system
+  labels:
+    app-group: lab
+spec:
+  project: lab
+  source:
+    repoURL: git@github.com:Griznah/k8s-apps.git
+    targetRevision: main
+    path: lab/argo-cd
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argo-system
+  revisionHistoryLimit: 5
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: lab-cilium-cni
+  namespace: argo-system
+  labels:
+    app-group: lab
+spec:
+  project: lab
+  source:
+    repoURL: git@github.com:Griznah/k8s-apps.git
+    targetRevision: main
+    path: lab/cilium
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: kube-system
+  revisionHistoryLimit: 5
+  ignoreDifferences:
+    ***REMOVED*** VM operator's prometheus-converter copies the source ServiceMonitor's
+    ***REMOVED*** annotations (incl. ArgoCD's ServiceMonitor tracking-id) onto the
+    ***REMOVED*** generated VMServiceScrape, fighting our own tracking-id stamp.
+    - group: operator.victoriametrics.com
+      kind: VMServiceScrape
+      jsonPointers:
+        - /metadata/annotations/argocd.argoproj.io~1tracking-id
+  syncPolicy:
+    ***REMOVED*** Manual sync like bifrost's cilium-cni — keeps upgrade sequencing control
+    ***REMOVED*** (cilium upgrades go lab-first, then bifrost, by hand).
+    syncOptions:
+      - ServerSideApply=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: lab-victoria-metrics
+  namespace: argo-system
+  labels:
+    app-group: lab
+spec:
+  project: lab
+  source:
+    repoURL: git@github.com:Griznah/k8s-apps.git
+    targetRevision: main
+    path: lab/victoria-metrics
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: observability
+  revisionHistoryLimit: 5
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: lab-cert-manager
+  namespace: argo-system
+  labels:
+    app-group: lab
+spec:
+  project: lab
+  source:
+    repoURL: git@github.com:Griznah/k8s-apps.git
+    targetRevision: main
+    path: lab/cert-manager
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cert-manager
+  revisionHistoryLimit: 5
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: lab-proxmox-csi-plugin
+  namespace: argo-system
+  labels:
+    app-group: lab
+spec:
+  project: lab
+  source:
+    repoURL: git@github.com:Griznah/k8s-apps.git
+    targetRevision: main
+    path: lab/proxmox-csi-plugin
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: csi-proxmox
+  revisionHistoryLimit: 5
+  syncPolicy:
+    automated: {}
+    syncOptions:
+      - CreateNamespace=true

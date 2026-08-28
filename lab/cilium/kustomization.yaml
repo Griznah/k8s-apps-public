@@ -1,0 +1,23 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+***REMOVED*** Lab mirror of network/cilium — same chart, same values file (single source of
+***REMOVED*** truth), adopted from the talos bootstrap Job's cilium-cli install.
+***REMOVED*** Diffs vs parent kustomization: no hubble-ui gateway route (no Gateway on lab).
+***REMOVED*** Chart version auto-bumped by Renovate together with the parent (kustomize manager).
+helmCharts:
+  - name: cilium
+    repo: https://helm.cilium.io
+    version: 1.20.1
+    releaseName: cilium
+    namespace: kube-system
+    valuesFile: ../../network/cilium/values.yaml
+    includeCRDs: true
+
+resources:
+  ***REMOVED*** Converter-generated from chart ServiceMonitor; committed so live object
+  ***REMOVED*** isn't extraneous (converter owns spec — see file header).
+  - ../../network/cilium/resources/cilium-agent-vmservicescrape.yaml
+  - ../../network/cilium/resources/cilium-envoy-vmservicescrape.yaml
+  - ../../network/cilium/resources/cilium-operator-vmservicescrape.yaml
+  - ../../network/cilium/resources/hubble-vmservicescrape.yaml
+  - ../../network/cilium/resources/hubble-relay-vmservicescrape.yaml

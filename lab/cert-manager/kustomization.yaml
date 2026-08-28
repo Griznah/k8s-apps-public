@@ -1,0 +1,16 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+***REMOVED*** Lab mirror of security/cert-manager. Diffs vs parent: no ClusterIssuers, no
+***REMOVED*** ksops — lab only serves VM operator admission webhook certs (self-signed
+***REMOVED*** CA), no public wildcard (no gateway, split-horizon DNS not lab's problem).
+resources:
+  - ../../security/cert-manager/resources/namespace.yaml
+
+helmCharts:
+  - includeCRDs: true
+    name: cert-manager
+    namespace: cert-manager
+    releaseName: cert-manager
+    repo: https://charts.jetstack.io
+    valuesFile: ../../security/cert-manager/values.yaml
+    version: v1.21.1 ***REMOVED*** https://artifacthub.io/packages/helm/cert-manager/cert-manager

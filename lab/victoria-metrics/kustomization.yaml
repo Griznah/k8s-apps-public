@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: observability
+
+***REMOVED*** Lab mirror of observability/victoria-metrics. Diffs vs parent: scrapes for
+***REMOVED*** apps not mirrored to lab (kube-state-metrics, node-exporter) dropped.
+helmCharts:
+  - name: victoria-metrics-operator
+    repo: https://victoriametrics.github.io/helm-charts
+    version: 0.67.2            ***REMOVED*** appVersion v0.72.0
+    releaseName: victoria-metrics-operator
+    namespace: observability
+    valuesFile: ../../observability/victoria-metrics/values.yaml
+    includeCRDs: true
+
+resources:
+  - ../../observability/victoria-metrics/resources/operator-netpol-rbac.yaml
+  - ../../observability/victoria-metrics/resources/vmsingle.yaml
+  - ../../observability/victoria-metrics/resources/vmagent.yaml
+  - ../../observability/victoria-metrics/resources/vmsm-kubelet.yaml
+  - ../../observability/victoria-metrics/resources/vmsm-etcd.yaml
+  - ../../observability/victoria-metrics/resources/vmsm-kube-apiserver.yaml
+  - ../../observability/victoria-metrics/resources/vmpodscrape-coredns.yaml
+  ***REMOVED*** lab etcd sits on the same vmpool1 QLC pool as bifrost's — host storage
+  ***REMOVED*** latency correlation stays relevant.
+  - ../../observability/victoria-metrics/resources/vmss-storage-2.yaml

@@ -1,0 +1,95 @@
+configs:
+  cm:
+    ***REMOVED*** --enable-alpha-plugins --enable-exec required for the ksops exec plugin to load (see repoServer below)
+    kustomize.buildOptions: "--enable-helm --enable-alpha-plugins --enable-exec"
+    users.anonymous.enabled: "false"
+    timeout.reconciliation: "60s"
+  params:
+    server.insecure: true
+    server.grpc-web: true
+    ***REMOVED*** cap concurrent renders (helm+kustomize forks) — complements the 1Gi limit.
+    ***REMOVED*** NOTE: flat dotted key — chart renders configs.params entries verbatim into argocd-cmd-params-cm
+    reposerver.parallelism.limit: "6"
+
+crds:
+  install: true
+  keep: false
+
+global:
+  revisionHistoryLimit: 5
+  addPrometheusAnnotations: true
+
+***REMOVED*** No ApplicationSet controller on lab — apps are an explicit list (lab/applications.yaml).
+***REMOVED*** Chart v10 has no applicationSet.enabled; zero replicas instead.
+applicationSet:
+  replicas: 0
+
+controller:
+  metrics:
+    enabled: true
+  replicas: 1
+  resources:
+    limits:
+      memory: 1024Mi
+    requests:
+      cpu: 200m
+      memory: 256Mi
+
+dex:
+  enabled: false
+
+redis:
+  resources:
+    requests:
+      memory: 200Mi
+      cpu: 100m
+    limits:
+      memory: 700Mi
+
+repoServer:
+  replicas: 1
+  metrics:
+    enabled: true
+  resources:
+    limits:
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 256Mi
+  initContainers:
+    - name: install-ksops
+      image: viaductoss/ksops:v4.5.1
+      command: ["/usr/local/bin/ksops", "install", "/custom-tools"]
+      volumeMounts:
+        - mountPath: /custom-tools
+          name: custom-tools
+  volumeMounts:
+    - mountPath: /home/argocd/.config/kustomize/plugin/viaduct.ai/v1/ksops/ksops
+      name: custom-tools
+      subPath: ksops
+    - mountPath: /.config/sops/age
+      name: sops-age
+      readOnly: true
+  volumes:
+    - name: custom-tools
+      emptyDir: {}
+    - name: sops-age
+      secret:
+        secretName: sops-age-key
+  extraEnv:
+    - name: XDG_CONFIG_HOME
+      value: /home/argocd/.config
+    - name: SOPS_AGE_KEY_FILE
+      value: /.config/sops/age/keys.txt
+
+server:
+  ***REMOVED*** bifrost runs 2 + redis-ha; lab is single-node — HA forms can't schedule.
+  replicas: 1
+  metrics:
+    enabled: true
+  resources:
+    limits:
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi

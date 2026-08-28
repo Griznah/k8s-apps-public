@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+***REMOVED*** Lab mirror of argo/argo-cd. Diffs vs parent: no gateway routes, HA off
+***REMOVED*** (single node — hardAntiAffinity would leave redis Pending forever),
+***REMOVED*** dex + applicationSet controller off (no SSO, no AppSets on lab).
+***REMOVED*** Keeps ksops (argocd-ssh-creds) — same deploy key reads k8s-apps.
+resources:
+  - ../../argo/argo-cd/resources/namespace.yaml
+  - ../../argo/argo-cd/resources/servicemonitors.yaml
+
+generators:
+  - ksops.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+helmCharts:
+  - name: argo-cd
+    repo: https://argoproj.github.io/argo-helm
+    version: 10.4.0 ***REMOVED*** https://artifacthub.io/packages/helm/argo/argo-cd?modal=changelog
+    releaseName: argocd
+    namespace: argo-system
+    valuesFile: values.yaml
+    includeCRDs: true

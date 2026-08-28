@@ -1,0 +1,18 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+***REMOVED*** Lab mirror of storage/proxmox-csi-plugin. Diffs vs parent: no ksops — the
+***REMOVED*** Proxmox API Secret is created manually on lab too (same token as bifrost).
+***REMOVED*** vmsingle's PVC needs the storage-fast StorageClass this renders.
+resources:
+  - ../../storage/proxmox-csi-plugin/resources/storageclass.yaml
+
+helmCharts:
+  - name: proxmox-csi-plugin
+    repo: oci://ghcr.io/sergelogvinov/charts
+    version: 0.5.10 ***REMOVED*** https://ghcr.io/sergelogvinov/charts/proxmox-csi-plugin
+    releaseName: proxmox-csi-plugin
+    namespace: csi-proxmox
+    valuesFile: ../../storage/proxmox-csi-plugin/values.yaml
+    includeCRDs: true
+
+namespace: csi-proxmox
