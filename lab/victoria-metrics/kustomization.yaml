@@ -7,7 +7,7 @@ namespace: observability
 helmCharts:
   - name: victoria-metrics-operator
     repo: https://victoriametrics.github.io/helm-charts
-    version: 0.67.2            ***REMOVED*** appVersion v0.72.0
+    version: 0.67.3            ***REMOVED*** appVersion v0.72.0
     releaseName: victoria-metrics-operator
     namespace: observability
     valuesFile: ../../observability/victoria-metrics/values.yaml
