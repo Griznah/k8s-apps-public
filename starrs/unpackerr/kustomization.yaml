@@ -15,4 +15,4 @@ namespace: starrs
 images:
   - name: unpackerr-image
     newName: golift/unpackerr
-    newTag: 0.15.2 ***REMOVED*** https://github.com/Unpackerr/unpackerr/releases
+    newTag: v0.16.1 ***REMOVED*** https://github.com/Unpackerr/unpackerr/releases
