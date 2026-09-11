@@ -53,6 +53,16 @@ configMapGenerator:
       - dashboards/cilium/hubble-dns-namespace.json
       - dashboards/cilium/hubble-l7-http-metrics-by-workload.json
       - dashboards/cilium/hubble-network-overview-namespace.json
+  - name: ops-dashboards
+    files:
+      ***REMOVED*** Imported 2026-09 from storage's local Grafana (folder `Local`, tag `ops`).
+      ***REMOVED*** Datasource rewritten storage-Prometheus -> VictoriaMetrics (uid P4169E866C3094E38).
+      ***REMOVED*** Needs VMStaticScrape storage-host (observability/victoria-metrics) for instance data.
+      - dashboards/local/linux-hosts-metrics-base.json
+      - dashboards/local/storage-hosts-metrics.json
+      - dashboards/local/storage-drive-stuff.json
+      - dashboards/local/storage-io-statistics.json
+      - dashboards/local/storage-2-hosts-metrics.json
 
 ***REMOVED*** configMapGenerator can't set per-entry annotations, so patch the stable
 ***REMOVED*** (unhashed) ConfigMap names to drive the Grafana `grafana_folder` annotation.
@@ -87,3 +97,13 @@ patches:
         name: cilium-dashboards
         annotations:
           grafana_folder: Cilium
+  - target:
+      kind: ConfigMap
+      name: ops-dashboards
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: ops-dashboards
+        annotations:
+          grafana_folder: Local
