@@ -7,15 +7,15 @@ metadata:
     argocd.argoproj.io/sync-wave: "2"
 spec:
   jobName: storage-host
-  ***REMOVED*** NFS/media server `storage` (services VLAN IP 10.0.4.205 — the only interface
-  ***REMOVED*** exposing node_exporter :9100; mgmt 10.0.10.200 + storage 10.0.250.200
-  ***REMOVED*** do not respond). Feeds the `Local` grafana folder (ops-dashboards CM):
-  ***REMOVED*** Linux Hosts / Odin Hosts / Storage I/O. `Odin drive stuff` stays empty until
-  ***REMOVED*** smartmon textfile collector is set up on storage (0 smartmon_* series on storage's
-  ***REMOVED*** own Prometheus too — dashboard was already dead there).
+  ***REMOVED*** NFS/media server `storage` = 10.0.10.200 (mgmt VLAN, same as storage-2-host).
+  ***REMOVED*** NOTE 10.0.4.205 is an LXC container (runs the storage grafana/dashboards
+  ***REMOVED*** stack) — NOT storage; don't point scrapes at it.
+  ***REMOVED*** Feeds the `Local` grafana folder (ops-dashboards CM): Linux Hosts /
+  ***REMOVED*** Odin Hosts / Storage I/O. `Odin drive stuff` stays empty until
+  ***REMOVED*** smartmon textfile collector is set up on storage.
   targetEndpoints:
     - targets:
-        - 10.0.4.205:9100
+        - 10.0.10.200:9100
       labels:
         node: storage
         role: nfs-media-server
