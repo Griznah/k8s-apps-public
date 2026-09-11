@@ -30,7 +30,14 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
+            - name: nfs-storage-dump-qbt
+              mountPath: /dump/qbt
       volumes:
+        - name: nfs-storage-dump-qbt
+          nfs:
+            path: /dump/qbt
+            server: 10.0.250.200
+            readOnly: false
         - name: config
           persistentVolumeClaim:
             claimName: qui-config
