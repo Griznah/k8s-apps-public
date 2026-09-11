@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+- resources/qui-deployment.yaml
+- resources/qui-services.yaml
+- resources/qui-gateway-route.yaml
+
+namespace: downloads
+
+images:
+- name: qui-image
+  newName: ghcr.io/autobrr/qui
+  newTag: v1.28.0@sha256:0bfe512eca0ec2ad639927f46a1a2a914feb75492d8032b7f866025162f562d5 ***REMOVED*** https://github.com/autobrr/qui

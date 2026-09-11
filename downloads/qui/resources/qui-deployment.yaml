@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qui
+  annotations:
+    argocd.argoproj.io/sync-wave: "20"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: qui
+  template:
+    metadata:
+      annotations:
+        backup.velero.io/backup-volumes: config
+      labels:
+        name: qui
+        app: qui
+        part-of: downloads
+    spec:
+      containers:
+        - name: qui
+          image: qui-image ***REMOVED*** controlled by Kustomize
+          env:
+            - name: TZ
+              value: Europe/Oslo
+          ports:
+            - containerPort: 7476
+              protocol: TCP
+          volumeMounts:
+            - name: config
+              mountPath: /config
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: qui-config
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qui-config
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  accessModes: ["ReadWriteOnce"]
+  storageClassName: "storage-fast"
+  resources:
+    requests:
+      storage: 5Gi
