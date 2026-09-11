@@ -1675,8 +1675,8 @@
       {
         "allowCustomValue": true,
         "current": {
-          "text": "node_exporter_metrics",
-          "value": "node_exporter_metrics"
+          "text": "storage-host",
+          "value": "storage-host"
         },
         "datasource": {
           "type": "prometheus",
