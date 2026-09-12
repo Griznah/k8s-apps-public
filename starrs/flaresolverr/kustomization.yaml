@@ -11,4 +11,4 @@ namespace: starrs
 images:
 - name: flaresolverr-image
   newName: ghcr.io/flaresolverr/flaresolverr
-  newTag: v3.5.0 ***REMOVED*** https://github.com/flaresolverr/FlareSolverr/pkgs/container/flaresolverr
+  newTag: v3.5.2 ***REMOVED*** https://github.com/flaresolverr/FlareSolverr/pkgs/container/flaresolverr
