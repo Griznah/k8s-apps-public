@@ -23,7 +23,7 @@ spec:
           type: RuntimeDefault
       containers:
         - name: absa-ac
-          image: ghcr.io/example/ac-discordbot:0.5.5
+          image: ghcr.io/example/ac-discordbot:0.5.6
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
