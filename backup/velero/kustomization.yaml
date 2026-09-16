@@ -11,7 +11,7 @@ generatorOptions:
 helmCharts:
   - name: velero
     repo: https://vmware-tanzu.github.io/helm-charts/
-    version: 12.1.0 ***REMOVED*** Velero 1.18.1 — https://artifacthub.io/packages/helm/vmware-tanzu/velero?modal=changelog
+    version: 12.2.0 ***REMOVED*** Velero 1.18.1 — https://artifacthub.io/packages/helm/vmware-tanzu/velero?modal=changelog
     releaseName: velero
     namespace: velero
     valuesFile: values.yaml
