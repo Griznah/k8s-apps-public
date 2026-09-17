@@ -11,4 +11,4 @@ namespace: audiobookshelf
 images:
   - name: abs-image
     newName: ghcr.io/advplyr/audiobookshelf
-    newTag: 2.36.0 ***REMOVED*** https://github.com/advplyr/audiobookshelf/pkgs/container/audiobookshelf
+    newTag: 2.36.1 ***REMOVED*** https://github.com/advplyr/audiobookshelf/pkgs/container/audiobookshelf
