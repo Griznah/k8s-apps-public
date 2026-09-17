@@ -11,6 +11,6 @@ namespace: starrs
 images:
   - name: prowlarr-image
     newName: ghcr.io/home-operations/prowlarr
-    newTag: rolling@sha256:a5b8031268268b9d3a121c49ea7cc89248538e6379a3e29b0d419489bd95e004 ***REMOVED*** https://github.com/home-operations/containers/pkgs/container/prowlarr
+    newTag: rolling@sha256:6152751c3ea2e7751564f5952173d5e83eed0e09f3fabd2cb6bdb58690c39e2f ***REMOVED*** https://github.com/home-operations/containers/pkgs/container/prowlarr
 ***REMOVED***    newName: lscr.io/linuxserver/prowlarr
 ***REMOVED***    newTag: 1.30.2.4939-ls105 ***REMOVED*** https://github.com/linuxserver/docker-prowlarr/releases
