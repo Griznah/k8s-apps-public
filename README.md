@@ -23,6 +23,7 @@ Argo CD ApplicationSets scan the directory structure and deploy applications to 
 | `media/` | Media servers (Audiobookshelf) |
 | `div/` | Miscellaneous applications (metrics-server, etc.) |
 | `backup/` | Backup (Velero) |
+| `wowsreg/` | WoW signup page (wowsreg, Go port of WoWSimpleRegistration) |
 
 Each top-level directory contains an `applicationset.yaml` defining its AppProject +
 ApplicationSet; apps under it typically ship a `kustomization.yaml` and Helm `values.yaml`.

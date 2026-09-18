@@ -1,0 +1,64 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: wowsreg
+  namespace: argo-system
+  annotations:
+    notifications.argoproj.io/subscribe.on-app-deleted.gmail: you@example.com
+    notifications.argoproj.io/subscribe.on-health-degraded.gmail: you@example.com
+    notifications.argoproj.io/subscribe.on-sync-failed.gmail: you@example.com
+    notifications.argoproj.io/subscribe.on-sync-status-unknown.gmail: you@example.com
+  finalizers:
+  - argocd.argoproj.io/resources-finalizer
+spec:
+  sourceRepos:
+  - "*"
+  destinations:
+  - namespace: "*"
+    server: "*"
+  clusterResourceWhitelist:
+  - group: "*"
+    kind: "*"
+  orphanedResources:
+    warn: false
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: wowsreg
+  namespace: argo-system
+spec:
+  generators:
+  - git:
+      repoURL: git@github.com:Griznah/k8s-apps.git
+      revision: main
+      directories:
+      - path: "wowsreg/*"
+      - exclude: true
+        path: "wowsreg/*.disabled"
+  syncPolicy:
+    preserveResourcesOnDeletion: false
+    applicationsSync: create-update
+  template:
+    metadata:
+      name: "{{ path.basenameNormalized }}"
+      labels:
+        app-group: wowsreg
+    spec:
+      project: wowsreg
+      source:
+        repoURL: git@github.com:Griznah/k8s-apps.git
+        targetRevision: main
+        path: "{{ path }}"
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: wowsreg
+      syncPolicy:
+        managedNamespaceMetadata:
+          annotations:
+            argocd.argoproj.io/sync-wave: "-10"
+        automated:
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+      revisionHistoryLimit: 5

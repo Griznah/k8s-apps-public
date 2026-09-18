@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - resources/wowsreg-deployment.yaml
+  - resources/wowsreg-service.yaml
+  - resources/wowsreg-gateway-route.yaml
+
+generators:
+  - ksops.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+namespace: wowsreg
+
+images:
+  - name: wowsreg-image
+    newName: ghcr.io/example/wowsreg-private
+    newTag: 0.0.1-rc3@sha256:1d5921367bd2d6fd74707a59f934575e7fdeb113714661999b382746a6fb45a3 ***REMOVED*** https://github.com/Griznah/wowsreg-private/tags

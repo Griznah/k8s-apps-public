@@ -1,0 +1,7 @@
+apiVersion: viaduct.ai/v1
+kind: ksops
+metadata:
+  name: ksops-wowsreg
+files:
+  - secrets/wowsreg-config.yaml
+  - secrets/ghcr-pull.yaml

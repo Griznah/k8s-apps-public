@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wowsreg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wowsreg
+  template:
+    metadata:
+      labels:
+        name: wowsreg
+        app: wowsreg
+        part-of: wowsreg
+    spec:
+      imagePullSecrets:
+        - name: ghcr-pull
+      containers:
+        - name: wowsreg
+          image: wowsreg-image ***REMOVED*** controlled by Kustomize
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          volumeMounts:
+            - name: config
+              mountPath: /app/config.json
+              subPath: config.json
+              readOnly: true
+      volumes:
+        - name: config
+          secret:
+            secretName: wowsreg-config
+            defaultMode: 0444
