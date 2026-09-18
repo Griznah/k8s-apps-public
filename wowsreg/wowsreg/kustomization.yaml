@@ -16,4 +16,4 @@ namespace: wowsreg
 images:
   - name: wowsreg-image
     newName: ghcr.io/example/wowsreg-private
-    newTag: 0.1.0@sha256:cebfe5df38f8e9b81f3b10bc24750165ed91d9f63ba1263b8131e592baac929b ***REMOVED*** https://github.com/Griznah/wowsreg-private/tags
+    newTag: 0.1.1 ***REMOVED*** https://github.com/Griznah/wowsreg-private/tags
