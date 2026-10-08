@@ -2,8 +2,8 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: copyparty
-  annotations:
-    argocd.argoproj.io/sync-wave: "20"
+  ***REMOVED*** no sync-wave: WFC StorageClass + higher-wave Deployment deadlocks ArgoCD
+  ***REMOVED*** (PVC waits for consumer, Deployment waits for PVC healthy)
 spec:
   replicas: 1
   strategy:
