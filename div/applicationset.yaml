@@ -37,6 +37,7 @@ spec:
           - path: "div/app-beta"
           - path: "div/absa-ac-dev"
           - path: "div/absa-ac"
+          - path: "div/copyparty"
           - path: "div/lubelogger"
           - path: "div/metrics-server"
           - path: "div/open-webui"
