@@ -53,10 +53,12 @@ spec:
             httpGet:
               path: /
               port: http
+            periodSeconds: 30 ***REMOVED*** keep probe spam out of the fileserver log
           readinessProbe:
             httpGet:
               path: /
               port: http
+            periodSeconds: 30
           resources:
             requests:
               cpu: 100m
