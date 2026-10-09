@@ -18,4 +18,4 @@ namespace: copyparty
 images:
   - name: copyparty-image
     newName: docker.io/copyparty/ac
-    newTag: 1.20.25@sha256:687ff7df0d476f1edbac7bdb040b4a65f1516afdf7f657fe018d28fb9c3c2cf4 ***REMOVED*** https://hub.docker.com/r/copyparty/ac
+    newTag: 1.20.25@sha256:8fb1a8f366085ca77cca31b235496e7c67c13cdc3cbedce1202e113e5c4b9e7e ***REMOVED*** https://hub.docker.com/r/copyparty/ac
