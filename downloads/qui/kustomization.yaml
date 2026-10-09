@@ -10,4 +10,4 @@ namespace: downloads
 images:
 - name: qui-image
   newName: ghcr.io/autobrr/qui
-  newTag: v1.31.1@sha256:01bb5ad8786bc57ff4e90a541b7b75e6a1ec207614222908151beed1e22ad6e3 ***REMOVED*** https://github.com/autobrr/qui
+  newTag: v1.31.1@sha256:6ee1cf6df0a82687089e6e181aad09edb826b4b779603c56a28c803d19db99fd ***REMOVED*** https://github.com/autobrr/qui
