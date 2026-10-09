@@ -1,0 +1,22 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - resources/wowmin-namespace.yaml
+  - resources/wowmin-pvc.yaml
+  - resources/wowmin-deployment.yaml
+  - resources/wowmin-service.yaml
+  - resources/wowmin-gateway-route.yaml
+
+generators:
+  - ksops.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+namespace: wowmin
+
+images:
+  - name: wowmin-image
+    newName: ghcr.io/example/wowmin
+    newTag: 3.0.0@sha256:f0e64cdb3e3e503e59366d425b0055ca8c5453b41da7a4a777db97c4ce7619ff
