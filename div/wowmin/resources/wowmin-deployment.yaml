@@ -20,6 +20,8 @@ spec:
         app: wowmin
         part-of: div
     spec:
+      ***REMOVED*** Service named "wowmin" would inject WOWMIN_PORT=tcp://... env and crash the app
+      enableServiceLinks: false
       securityContext:
         runAsNonRoot: true
         runAsUser: 1000 ***REMOVED*** node user in image
