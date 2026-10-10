@@ -42,6 +42,7 @@ spec:
           - path: "div/lubelogger"
           - path: "div/metrics-server"
           - path: "div/open-webui"
+          - path: "azerothcore-discord"
           - exclude: true
             path: "div/*.disabled"
   syncPolicy:
