@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: azerothcore-discord
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: azerothcore-discord
+  template:
+    metadata:
+      labels:
+        name: azerothcore-discord
+        app: azerothcore-discord
+        part-of: azerothcore-discord
+    spec:
+      containers:
+        - name: azerothcore-discord
+          image: azerothcore-discord-image ***REMOVED*** controlled by Kustomize
+          env:
+            - name: DISCORD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: azerothcore-discord-config
+                  key: DISCORD_TOKEN
+          volumeMounts:
+            - name: config
+              mountPath: /data/config.json
+              subPath: config.json
+              readOnly: true
+      volumes:
+        - name: config
+          secret:
+            secretName: azerothcore-discord-config
+            defaultMode: 0444
