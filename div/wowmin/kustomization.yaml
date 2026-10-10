@@ -19,4 +19,4 @@ namespace: wowmin
 images:
   - name: wowmin-image
     newName: ghcr.io/example/wowmin
-    newTag: 3.0.1@sha256:82b1dca2bfa9cc5b4b1c9aeb49b9dadca04b63523c90c2db1cae454c21522495
+    newTag: 3.0.2@sha256:e0d25601073640ef4781637c8dfb5735ad2a5fc03621d42ef101812b9e4da918
