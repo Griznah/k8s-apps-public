@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - resources/ntfy-namespace.yaml
+  - resources/ntfy-deployment.yaml
+  - resources/ntfy-service.yaml
+  - resources/ntfy-gateway-route.yaml
+
+generators:
+  - ksops.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+namespace: ntfy
+
+images:
+  - name: ntfy-image
+    newName: docker.io/binwiederhier/ntfy
+    newTag: v2.29.0@sha256:4c599cf0818965782f93f652bd843e92714992e84d6b88ad17713dc0951cda1f ***REMOVED*** https://hub.docker.com/r/binwiederhier/ntfy
