@@ -29,12 +29,12 @@ digest there.
 ⚠ **ntfy owns that bucket outright**: it deletes objects it doesn't know about
 (3h attachment expiry sweeper). Never point anything else at bucket `ntfy`.
 
-⚠ **Known broken (2026-10-11):** `PutObject` to bucket `ntfy` returns
-`InternalError` storage-side (velero user PUTs to `backups` fine, so the gateway
-and write path are healthy — the bucket config itself is faulty). Messages,
-auth and the web UI all work; attachment uploads 500 until the bucket is
-fixed/recreated on storage (`weed shell`: `s3.bucket.configure -bucket ntfy …`,
-compare against `backups`). No cluster change needed once fixed.
+Publish an attachment (`?filename=` is what triggers file handling — a bare
+`-T`/`-d` body is just message text):
+
+```bash
+curl -H 'Authorization: Bearer tk_…' -T file.zip 'https://ntfy.example.com/topic?filename=file.zip'
+```
 
 ***REMOVED******REMOVED*** Auth
 
