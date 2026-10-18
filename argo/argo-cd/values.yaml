@@ -51,7 +51,7 @@ dex:
 
 redis-ha:
   enabled: true
-  replicas: 2
+  replicas: 3
   ***REMOVED*** https://github.com/argoproj/argo-cd/issues/11388
   haproxy:
     replicas: 2
