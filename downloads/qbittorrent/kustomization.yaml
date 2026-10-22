@@ -11,4 +11,4 @@ namespace: downloads
 images:
 - name: qbittorrent-image
   newName: ghcr.io/home-operations/qbittorrent
-  newTag: rolling@sha256:faa37907a4242c6c3c5fdd3f7ea95e0c2308534406f4d606ba64d816e764d39f ***REMOVED*** https://github.com/home-operations/containers/pkgs/container/qbittorrent
+  newTag: rolling@sha256:5a858e61f94cf2712391db32ed03556576c700858f3e62c4c6fcde262443ebd8 ***REMOVED*** https://github.com/home-operations/containers/pkgs/container/qbittorrent
