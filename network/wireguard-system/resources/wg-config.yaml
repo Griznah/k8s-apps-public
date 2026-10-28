@@ -20,6 +20,10 @@ stringData:
     [Interface]
     Address = 10.200.0.1/24
     ListenPort = 51820
+    ***REMOVED*** Pin MTU: bryopsida :main image started defaulting wg0 to 1200 (2026-10-28) —
+    ***REMOVED*** with client MTU 1280+ every server->client segment >1200 needs ICMP
+    ***REMOVED*** frag-needed and PMTUD doesn't converge -> mid-flow stalls (images, TLS).
+    MTU = 1420
     PostUp = wg set wg0 private-key /etc/wireguard/privatekey && iptables -t nat -A POSTROUTING -s 10.200.0.0/24 -o eth0 -j MASQUERADE
     PostDown = iptables -t nat -D POSTROUTING -s 10.200.0.0/24 -o eth0 -j MASQUERADE
 
