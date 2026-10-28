@@ -13,8 +13,10 @@ securityContext:
 
 metrics:
   enabled: true
+***REMOVED*** PDB disabled: pointless at 1 replica (minAvailable:1 would block every
+***REMOVED*** voluntary drain; the Deployment itself restores the pod on crash).
 disruptionBudget:
-  minAvailable: 1
+  enabled: false
 autoscaling:
   enabled: false
 wireguard:
@@ -39,5 +41,11 @@ service:
 ***REMOVED*** iptables-laden template — see that file's header comment.
 configSecretName: wireguard-wg-config
 secretName: wireguard-wg
-replicaCount: 2
+***REMOVED*** 1 replica INTENTIONAL: each pod netns holds MASQUERADE+conntrack for
+***REMOVED*** clients' inner TCP flows. With 2 replicas, a carrier-NAT rebind or L2
+***REMOVED*** leader flip rehashes the UDP flow to the other pod -> mid-flow packets hit
+***REMOVED*** a netns with no conntrack -> INVALID drop -> stalled/partial page loads
+***REMOVED*** (hit 2026-10-28, s22). WG endpoint roaming makes rebinds seamless in ONE
+***REMOVED*** netns. Pod restart = seconds of tunnel down, clients auto-reconnect.
+replicaCount: 1
 
