@@ -3,6 +3,10 @@
 grafana.ini:
   server:
     root_url: https://grafana.example.com/
+    ***REMOVED*** dual hostname (example.com + k8s.example.com): callback pins to root_url,
+    ***REMOVED*** state cookie must be shared across both or login dies with
+    ***REMOVED*** 'Missing saved oauth state'
+    cookie_domain: .example.com
   auth.generic_oauth:
     enabled: true
     name: Pocket ID
