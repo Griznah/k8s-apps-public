@@ -21,7 +21,7 @@ spec:
       cpu: 100m
       memory: 256Mi
     limits:
-      memory: 1Gi
+      memory: 2Gi
 ***REMOVED*** No Ingress/LoadBalancer: VictoriaLogs single-node has no auth, same policy
 ***REMOVED*** as VMSingle — ClusterIP-only (operator Service vlsingle-victoria-logs:9428).
 ***REMOVED*** Query via Grafana (victorialogs-datasource plugin) or port-forward 8429:9428.
