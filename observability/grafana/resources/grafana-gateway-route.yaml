@@ -10,7 +10,6 @@ spec:
     - name: consolidated-gateway
       namespace: gateway
   hostnames:
-    - grafana.k8s.example.com
     - grafana.example.com
   rules:
     - matches:
@@ -20,3 +19,24 @@ spec:
       backendRefs:
         - name: grafana
           port: 80
+---
+***REMOVED*** k8s alias -> canonical host. OAuth (pocket-id) callback pins to root_url;
+***REMOVED*** oauth_state cookie is host-only, alias host breaks login with
+***REMOVED*** 'Missing saved oauth state'. Redirect alias so SSO always starts canonical.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: grafana-k8s-canonical
+  namespace: observability
+spec:
+  parentRefs:
+    - name: consolidated-gateway
+      namespace: gateway
+  hostnames:
+    - grafana.k8s.example.com
+  rules:
+    - filters:
+        - type: RequestRedirect
+          requestRedirect:
+            hostname: grafana.example.com
+            statusCode: 308
