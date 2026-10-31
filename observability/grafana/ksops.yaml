@@ -4,3 +4,4 @@ metadata:
   name: ksops-grafana
 files:
   - secrets/grafana-admin.yaml
+  - secrets/grafana-oidc.yaml
