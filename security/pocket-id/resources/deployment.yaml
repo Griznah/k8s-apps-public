@@ -31,6 +31,12 @@ spec:
             - containerPort: 1411
               name: http
           env:
+            ***REMOVED*** Image entrypoint drops to PUID:PGID via su-exec; default non-root
+            ***REMOVED*** cannot create files on the root-owned CSI PVC -> SQLITE_CANTOPEN(14).
+            - name: PUID
+              value: "0"
+            - name: PGID
+              value: "0"
             - name: APP_URL
               value: https://id.example.com
             - name: TRUST_PROXY
