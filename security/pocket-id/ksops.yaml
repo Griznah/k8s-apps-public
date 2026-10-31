@@ -1,0 +1,6 @@
+apiVersion: viaduct.ai/v1
+kind: ksops
+metadata:
+  name: ksops-pocket-id
+files:
+  - secrets/pocket-id.yaml

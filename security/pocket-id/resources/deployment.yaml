@@ -1,0 +1,67 @@
+***REMOVED*** Pocket-ID — passkey-only OIDC provider (SQLite on /data PVC).
+***REMOVED*** First admin: open https://id.example.com and complete the initial-admin signup.
+***REMOVED*** Later users: admin issues signup tokens (invite links) in the UI.
+***REMOVED*** Upgrade: bump image tag only. Issuer URL is APP_URL — permanent, do not change.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pocket-id
+  namespace: sso
+  labels:
+    app: pocket-id
+spec:
+  replicas: 1
+  ***REMOVED*** RWO PVC + SQLite: avoid multi-attach during rollouts
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: pocket-id
+  template:
+    metadata:
+      labels:
+        app: pocket-id
+      annotations:
+        backup.velero.io/backup-volumes: data
+    spec:
+      containers:
+        - name: pocket-id
+          image: ghcr.io/pocket-id/pocket-id:v2.5.0
+          ports:
+            - containerPort: 1411
+              name: http
+          env:
+            - name: APP_URL
+              value: https://id.example.com
+            - name: TRUST_PROXY
+              value: "true"
+            ***REMOVED*** DB default is RELATIVE `data/pocket-id.db` (CWD=/app/backend) → container FS,
+            ***REMOVED*** wiped on restart. Absolute path puts it on the PVC.
+            - name: DB_CONNECTION_STRING
+              value: /data/pocket-id.db
+            - name: UPLOAD_PATH
+              value: /data/uploads
+            - name: ENCRYPTION_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: pocket-id
+                  key: encryption-key
+          volumeMounts:
+            - name: data
+              mountPath: /data
+          resources:
+            requests:
+              cpu: 50m
+              memory: 128Mi
+            limits:
+              memory: 1Gi
+          readinessProbe:
+            tcpSocket:
+              port: http
+          livenessProbe:
+            tcpSocket:
+              port: http
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: pocket-id-data

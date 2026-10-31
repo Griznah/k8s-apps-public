@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pocket-id-data
+  namespace: sso
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: storage-fast
+  resources:
+    requests:
+      storage: 1Gi
