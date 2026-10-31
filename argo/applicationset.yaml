@@ -53,8 +53,8 @@ spec:
         namespace: argo-system
       revisionHistoryLimit: 5
       syncPolicy:
-***REMOVED***        automated:
-***REMOVED***          selfHeal: true
+        automated:
+          selfHeal: true
         syncOptions:
         - CreateNamespace=true
         - ServerSideApply=true
