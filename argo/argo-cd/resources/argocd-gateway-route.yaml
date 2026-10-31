@@ -14,7 +14,7 @@ spec:
       name: consolidated-gateway
       namespace: gateway
   hostnames:
-    - argocd.example.com
+    - argocd.k8s.example.com
   rules:
     - backendRefs:
         - group: ''
@@ -27,8 +27,10 @@ spec:
             type: PathPrefix
             value: /
 ---
-***REMOVED*** k8s alias -> canonical host. OIDC callback pins to configs.cm.url
-***REMOVED*** (argocd.example.com); login started on the alias dies at callback.
+***REMOVED*** bare host -> k8s canonical (user preference: argocd lives on .k8s. only).
+***REMOVED*** OIDC callback pins to configs.cm.url (argocd.k8s.example.com).
+***REMOVED*** Route NAME kept from the pre-flip layout — renaming creates a second route
+***REMOVED*** on the same hostname and Cilium serves the oldest (known gotcha).
 ***REMOVED*** gRPC CLI host (argocd-grpc.k8s.example.com) is NOT redirected.
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
@@ -42,10 +44,10 @@ spec:
       name: consolidated-gateway
       namespace: gateway
   hostnames:
-    - argocd.k8s.example.com
+    - argocd.example.com
   rules:
     - filters:
         - type: RequestRedirect
           requestRedirect:
-            hostname: argocd.example.com
+            hostname: argocd.k8s.example.com
             statusCode: 308

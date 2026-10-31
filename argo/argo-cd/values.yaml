@@ -4,7 +4,7 @@ configs:
     kustomize.buildOptions: "--enable-helm --enable-alpha-plugins --enable-exec"
     users.anonymous.enabled: "false"
     timeout.reconciliation: "60s"
-    url: https://argocd.example.com
+    url: https://argocd.k8s.example.com
     ***REMOVED*** OIDC via Pocket-ID (https://id.example.com). clientSecret resolved from
     ***REMOVED*** Secret argocd-oidc-pocketid (ksops, secrets/argocd-oidc-pocketid.yaml).
     ***REMOVED*** NOTE: keep exactly ONE top-level `configs:` block — helm/YAML last-wins
