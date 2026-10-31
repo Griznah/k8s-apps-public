@@ -1,0 +1,27 @@
+apiVersion: operator.victoriametrics.com/v1
+kind: VLSingle
+metadata:
+  name: victoria-logs
+  namespace: observability
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  ***REMOVED*** Bare number = months (operator convention, same as VMSingle).
+  retentionPeriod: "3"
+  removePvcAfterDelete: true
+  storage:
+    storageClassName: storage-fast
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 20Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      memory: 1Gi
+***REMOVED*** No Ingress/LoadBalancer: VictoriaLogs single-node has no auth, same policy
+***REMOVED*** as VMSingle — ClusterIP-only (operator Service vlsingle-victoria-logs:9428).
+***REMOVED*** Query via Grafana (victorialogs-datasource plugin) or port-forward 8429:9428.

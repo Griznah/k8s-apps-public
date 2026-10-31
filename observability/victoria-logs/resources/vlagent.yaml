@@ -1,0 +1,26 @@
+apiVersion: operator.victoriametrics.com/v1
+kind: VLAgent
+metadata:
+  name: victoria-logs
+  namespace: observability
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  ***REMOVED*** Switches VLAgent to DaemonSet mode + mounts host paths where k8s
+  ***REMOVED*** container logs live. Discovers and tails all pods on each node,
+  ***REMOVED*** enriches with k8s metadata (pod name, namespace, labels).
+  k8sCollector:
+    enabled: true
+  ***REMOVED*** -remoteWrite.url MUST end with /insert/native (vlagent requirement).
+  remoteWrite:
+    - url: "http://vlsingle-victoria-logs.observability.svc:9428/insert/native"
+  resources:
+    requests:
+      cpu: 50m
+      memory: 128Mi
+    limits:
+      memory: 512Mi
+***REMOVED*** Queue buffer + checkpoints are ephemeral by default (operator-managed
+***REMOVED*** tmpDataPath): pod deletion while VLSingle is down loses buffered logs.
+***REMOVED*** shortcut: acceptable for homelab; add storage.volumeClaimTemplate if
+***REMOVED*** log-loss during maintenance ever matters.

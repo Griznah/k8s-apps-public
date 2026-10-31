@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: observability
+
+***REMOVED*** VictoriaLogs — deployed via the existing VictoriaMetrics operator
+***REMOVED*** (chart victoria-metrics-operator in observability/victoria-metrics, already
+***REMOVED*** serves VL* CRDs at operator.victoriametrics.com/v1).
+***REMOVED*** Commit ONLY the CRs here — operator-generated children (Deployments,
+***REMOVED*** DaemonSets, Services, PVCs, self-scrapes) are operator-owned (same rule as
+***REMOVED*** the VM Operator + ArgoCD SSA policy in memory.md).
+resources:
+  - resources/vlsingle.yaml
+  - resources/vlagent.yaml
