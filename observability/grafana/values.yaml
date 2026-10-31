@@ -21,7 +21,7 @@ deploymentStrategy:
 
 plugins:
   - grafana-clock-panel
-  - victorialogs-datasource
+  - victoriametrics-logs-datasource
 
 datasources:
   datasources.yaml:
@@ -33,7 +33,7 @@ datasources:
         access: proxy
         isDefault: true
       - name: VictoriaLogs
-        type: victorialogs-datasource
+        type: victoriametrics-logs-datasource
         url: http://vlsingle-victoria-logs.observability.svc:9428
         access: proxy
 
