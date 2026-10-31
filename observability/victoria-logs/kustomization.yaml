@@ -11,3 +11,4 @@ namespace: observability
 resources:
   - resources/vlsingle.yaml
   - resources/vlagent.yaml
+  - resources/vmlogs-gateway-route.yaml

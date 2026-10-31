@@ -1,0 +1,23 @@
+***REMOVED*** Internal-only (no bare example.com hostname): VictoriaLogs has NO auth —
+***REMOVED*** LAN-only deliberate tradeoff, do not add the external hostname.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: vmlogs
+  namespace: observability
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+spec:
+  parentRefs:
+    - name: consolidated-gateway
+      namespace: gateway
+  hostnames:
+    - vmlogs.k8s.example.com
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: vlsingle-victoria-logs
+          port: 9428
