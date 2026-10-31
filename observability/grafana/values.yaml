@@ -14,6 +14,11 @@ persistence:
   storageClassName: storage-fast
   size: 10Gi
 
+***REMOVED*** RWO PVC + RollingUpdate = deadlock (new pod waits attach, old never
+***REMOVED*** terminates) — must be Recreate.
+deploymentStrategy:
+  type: Recreate
+
 plugins:
   - grafana-clock-panel
   - victorialogs-datasource
