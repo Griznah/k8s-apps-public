@@ -4,3 +4,4 @@ metadata:
   name: ksops-argo-cd
 files:
   - secrets/argocd-ssh-creds.yaml
+  - secrets/argocd-oidc-pocketid.yaml

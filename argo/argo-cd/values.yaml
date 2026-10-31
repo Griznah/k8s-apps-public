@@ -4,10 +4,32 @@ configs:
     kustomize.buildOptions: "--enable-helm --enable-alpha-plugins --enable-exec"
     users.anonymous.enabled: "false"
     timeout.reconciliation: "60s"
+    url: https://argocd.example.com
+    ***REMOVED*** OIDC via Pocket-ID (https://id.example.com). clientSecret resolved from
+    ***REMOVED*** Secret argocd-oidc-pocketid (ksops, secrets/argocd-oidc-pocketid.yaml).
+    ***REMOVED*** NOTE: keep exactly ONE top-level `configs:` block — helm/YAML last-wins
+    ***REMOVED*** silently drops earlier blocks from renders.
+    oidc.config: |
+      name: Pocket ID
+      issuer: https://id.example.com
+      clientID: argocd
+      clientSecret: $argocd-oidc-pocketid:clientSecret
+      requestedScopes: ["openid", "profile", "email", "groups"]
+      requestedIDTokenClaims:
+        groups:
+          essential: true
+  rbac:
+    ***REMOVED*** groups claim carries Pocket-ID group names; only `admins` gets admin.
+    ***REMOVED*** Everyone else authenticates but sees nothing (default policy empty).
+    policy.csv: |
+      g, admins, role:admin
   params:
     server.insecure: true
     server.grpc-web: true
     applicationsetcontroller.policy: "create-update"
+    ***REMOVED*** cap concurrent renders (helm+kustomize forks) — complements the 1Gi limit.
+    ***REMOVED*** NOTE: flat dotted key — chart renders configs.params entries verbatim into argocd-cmd-params-cm
+    reposerver.parallelism.limit: "6"
 
 crds:
   install: true
@@ -64,12 +86,6 @@ redis:
       cpu: 100m
     limits:
       memory: 700Mi
-
-configs:
-  params:
-    ***REMOVED*** cap concurrent renders (helm+kustomize forks) — complements the 1Gi limit.
-    ***REMOVED*** NOTE: flat dotted key — chart renders configs.params entries verbatim into argocd-cmd-params-cm
-    reposerver.parallelism.limit: "6"
 
 repoServer:
   replicas: 1
