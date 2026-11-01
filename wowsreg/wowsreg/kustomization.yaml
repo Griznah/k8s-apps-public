@@ -17,3 +17,4 @@ images:
   - name: wowsreg-image
     newName: ghcr.io/example/wowsreg-private
     newTag: 0.1.2 ***REMOVED*** https://github.com/Griznah/wowsreg-private/tags
+
