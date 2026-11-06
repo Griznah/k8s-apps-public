@@ -28,10 +28,6 @@ stringData:
     PostDown = iptables -t nat -D POSTROUTING -s 10.200.0.0/24 -o eth0 -j MASQUERADE
 
     ***REMOVED*** Clients
-    [Peer]
-    ***REMOVED*** friendly_name = bombom-s22
-    PublicKey = 4VQkp7s05nGnIxmSyltGgQu1yOBnOgc0ZsF4q6Fp7QI=
-    AllowedIPs = 10.200.0.100/32
 
     [Peer]
     ***REMOVED*** friendly_name = bombom-tabs4
@@ -42,3 +38,8 @@ stringData:
     ***REMOVED*** friendly_name = satole-E20001
     PublicKey = V68zPGIZMDhlNxbvCDn3OICurqx/1G4TYPaaAbU311k=
     AllowedIPs = 10.200.0.102/32
+
+    [Peer]
+    ***REMOVED*** friendly_name = bombom-s22
+    PublicKey = 20XoYW2jUMbW5wY/bikvPABcEkPEdEPvjnp27xJA4Uc=
+    AllowedIPs = 10.200.0.100/32

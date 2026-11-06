@@ -21,15 +21,15 @@ autoscaling:
   enabled: false
 wireguard:
   clients:
-    - FriendlyName: bombom-s22
-      PublicKey: 4VQkp7s05nGnIxmSyltGgQu1yOBnOgc0ZsF4q6Fp7QI=
-      AllowedIPs: 10.200.0.100/32
     - FriendlyName: bombom-tabs4
       PublicKey: qUUrOA8Du3pqftRV8BA5/cr6RLMzJzYEg6ppotLZKlM=
       AllowedIPs: 10.200.0.101/32
     - FriendlyName: satole-E20001
       PublicKey: V68zPGIZMDhlNxbvCDn3OICurqx/1G4TYPaaAbU311k=
       AllowedIPs: 10.200.0.102/32
+    - FriendlyName: bombom-s22
+      PublicKey: 20XoYW2jUMbW5wY/bikvPABcEkPEdEPvjnp27xJA4Uc=
+      AllowedIPs: 10.200.0.100/32
 service:
   annotations:
     lbipam.cilium.io/ips: "10.0.50.200"
