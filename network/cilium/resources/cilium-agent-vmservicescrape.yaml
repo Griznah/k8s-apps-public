@@ -11,8 +11,10 @@ metadata:
   labels:
     app.kubernetes.io/name: cilium-agent
 spec:
+  attach_metadata: {}
   endpoints:
-  - honorLabels: true
+  - attach_metadata: {}
+    honorLabels: true
     interval: 10s
     path: /metrics
     port: metrics
