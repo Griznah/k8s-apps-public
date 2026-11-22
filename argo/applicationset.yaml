@@ -3,11 +3,6 @@ kind: AppProject
 metadata:
   name: argo
   namespace: argo-system
-  annotations:
-    notifications.argoproj.io/subscribe.on-app-deleted.gmail: you@example.com
-    notifications.argoproj.io/subscribe.on-health-degraded.gmail: you@example.com
-    notifications.argoproj.io/subscribe.on-sync-failed.gmail: you@example.com
-    notifications.argoproj.io/subscribe.on-sync-status-unknown.gmail: you@example.com
   finalizers:
   - argocd.argoproj.io/resources-finalizer
 spec:

@@ -71,6 +71,11 @@ dex:
       cpu: 10m
       memory: 128Mi
 
+***REMOVED*** unused — controller spammed 13.5k "trigger not configured" errors/h
+***REMOVED*** (stale gmail subscriptions removed from argo/applicationset.yaml 2026-11-22)
+notifications:
+  enabled: false
+
 redis-ha:
   enabled: true
   replicas: 3
