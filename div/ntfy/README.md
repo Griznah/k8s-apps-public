@@ -33,7 +33,7 @@ Publish an attachment (`?filename=` is what triggers file handling — a bare
 `-T`/`-d` body is just message text):
 
 ```bash
-curl -H 'Authorization: Bearer tk_…' -T file.zip 'https://ntfy.example.com/topic?filename=file.zip'
+curl -H 'Authorization: Bearer <token>' -T file.zip 'https://ntfy.example.com/topic?filename=file.zip'
 ```
 
 ***REMOVED******REMOVED*** Auth
@@ -50,12 +50,46 @@ kubectl -n ntfy exec deploy/ntfy -- ntfy token add bombom             ***REMOVED
 Publish with a token:
 
 ```bash
-curl -H 'Authorization: Bearer tk_…' -d 'hello' https://ntfy.example.com/mytopic
-curl -H 'Authorization: Bearer tk_…' -T file.zip https://ntfy.example.com/mytopic   ***REMOVED*** attachment
+curl -H 'Authorization: Bearer <token>' -d 'hello' https://ntfy.example.com/mytopic
+curl -H 'Authorization: Bearer <token>' -T file.zip https://ntfy.example.com/mytopic   ***REMOVED*** attachment
 ```
 
 Subscribe in the ntfy phone app / web UI against `https://ntfy.example.com`
 with the same token.
+
+***REMOVED******REMOVED******REMOVED*** Agent `grizclaw` (zeroclaw notifications)
+
+The zeroclaw agent `grizclaw` sends phone notifications through this ntfy.
+Least-privilege setup, provisioned 2026-11-22:
+
+- **User** `grizclaw`, role `user` (non-admin); password random and discarded —
+  auth is token-only.
+- **Grant**: write-only on topic `grizclaw-alerts` (`ntfy access grizclaw`
+  → `grizclaw-alerts: write-only`). It cannot read the topic or anything
+  else; the phone reads via the admin `bombom` token (read-all).
+- **Token**: `ntfy token add grizclaw`, value lives only in
+  `~/.zeroclaw/agents/grizclaw/workspace/.ntfy-token` (mode 600); the
+  `bin/ntfy-send` script in that workspace uses it. Never commit it.
+- A second, older token labeled `grizclaw-telegram` on the same user is
+  unrelated to this setup — leave it alone.
+
+Provisioning / verification:
+
+```bash
+kubectl -n ntfy exec deploy/ntfy -- ntfy user add --role=user grizclaw   ***REMOVED*** was already present
+kubectl -n ntfy exec deploy/ntfy -- ntfy access grizclaw grizclaw-alerts wo   ***REMOVED*** wo = write-only
+kubectl -n ntfy exec deploy/ntfy -- ntfy token add grizclaw              ***REMOVED*** prints token once
+kubectl -n ntfy exec deploy/ntfy -- ntfy access grizclaw                 ***REMOVED*** → write-only access to topic grizclaw-alerts
+kubectl -n ntfy exec deploy/ntfy -- ntfy user list                       ***REMOVED*** grizclaw: user, write-only on grizclaw-alerts
+```
+
+Revocation (independent of everything else):
+
+```bash
+kubectl -n ntfy exec deploy/ntfy -- ntfy token remove grizclaw <the-token>
+kubectl -n ntfy exec deploy/ntfy -- ntfy access grizclaw reset           ***REMOVED*** drop the grant
+kubectl -n ntfy exec deploy/ntfy -- ntfy user del grizclaw               ***REMOVED*** remove the user
+```
 
 ***REMOVED******REMOVED*** Config changes
 
