@@ -7,7 +7,9 @@ metadata:
     argocd.argoproj.io/sync-wave: "1"
 spec:
   ***REMOVED*** Bare number = months (operator convention; matches the VMSingle docs example "12").
-  retentionPeriod: "6"
+  ***REMOVED*** 2026-11-26: 6→3 — VM went read-only at 100% disk (19.5G/20Gi, writes dropped since
+  ***REMOVED*** 2026-11-12). Cut + PVC expansion 20→30Gi per incident post-mortem.
+  retentionPeriod: "3"
   removePvcAfterDelete: true
   storage:
     storageClassName: storage-fast
@@ -15,7 +17,7 @@ spec:
       - ReadWriteOnce
     resources:
       requests:
-        storage: 20Gi
+        storage: 30Gi
   resources:
     requests:
       cpu: 250m
