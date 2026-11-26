@@ -1,0 +1,239 @@
+{
+  "annotations": {
+    "list": []
+  },
+  "editable": true,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "title": "etcd raft / disk health (vmpool1 root cause)",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": { "1": { "text": "has leader", "color": "green" }, "0": { "text": "NO LEADER", "color": "red" } } }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 0.5 } ] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 1 },
+      "id": 1,
+      "targets": [ { "expr": "etcd_server_has_leader", "legendFormat": "{{instance}}" } ],
+      "title": "etcd has leader (per member)",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 6, "x": 6, "y": 1 },
+      "id": 2,
+      "targets": [ { "expr": "increase(etcd_server_leader_changes_seen_total[1h])", "legendFormat": "{{instance}}" } ],
+      "title": "leader changes (1h)",
+      "type": "timeseries",
+      "fieldConfig": { "defaults": { "custom": { "fillOpacity": 20 } }, "overrides": [] }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 6, "x": 12, "y": 1 },
+      "id": 3,
+      "targets": [ { "expr": "rate(etcd_server_proposals_failed_total[5m])", "legendFormat": "{{instance}}" } ],
+      "title": "raft proposals failed/s",
+      "type": "timeseries",
+      "fieldConfig": { "defaults": { "unit": "ops", "custom": { "fillOpacity": 20 } }, "overrides": [] }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 6, "x": 18, "y": 1 },
+      "id": 4,
+      "targets": [ { "expr": "etcd_mvcc_db_total_size_bytes", "legendFormat": "{{instance}}" } ],
+      "title": "etcd db size",
+      "type": "timeseries",
+      "fieldConfig": { "defaults": { "unit": "bytes", "custom": { "fillOpacity": 20 } }, "overrides": [] }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "description": "Known-bad >25ms (vmpool1 logbias=throughput, no PLP SLOG); residual 120-210ms until etcdpool migration.",
+      "gridPos": { "h": 8, "w": 8, "x": 0, "y": 9 },
+      "id": 5,
+      "targets": [ { "expr": "histogram_quantile(0.99, sum by (le, instance) (rate(etcd_disk_wal_fsync_duration_seconds_bucket[5m]))) * 1000", "legendFormat": "{{instance}}" } ],
+      "title": "WAL fsync p99 (healthy <25ms)",
+      "type": "timeseries",
+      "fieldConfig": { "defaults": { "unit": "ms", "custom": { "fillOpacity": 20 }, "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "orange", "value": 25 }, { "color": "red", "value": 100 } ] } }, "overrides": [] }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 8, "x": 8, "y": 9 },
+      "id": 6,
+      "targets": [ { "expr": "histogram_quantile(0.99, sum by (le, instance) (rate(etcd_disk_backend_commit_duration_seconds_bucket[5m]))) * 1000", "legendFormat": "{{instance}}" } ],
+      "title": "backend commit p99",
+      "type": "timeseries",
+      "fieldConfig": { "defaults": { "unit": "ms", "custom": { "fillOpacity": 20 } }, "overrides": [] }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 8, "x": 16, "y": 9 },
+      "id": 7,
+      "targets": [ { "expr": "histogram_quantile(0.99, sum by (le, To) (rate(etcd_network_peer_round_trip_time_seconds_bucket[5m]))) * 1000", "legendFormat": "{{instance}} -> {{To}}" } ],
+      "title": "peer RTT p99",
+      "type": "timeseries",
+      "fieldConfig": { "defaults": { "unit": "ms", "custom": { "fillOpacity": 20 } }, "overrides": [] }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 17 },
+      "id": 101,
+      "title": "apiserver stress (etcd burst collateral)",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 18 },
+      "id": 8,
+      "targets": [ { "expr": "sum by (code) (rate(apiserver_request_total{job=\"kubernetes\",code=~\"5..\"}[5m]))", "legendFormat": "{{code}}" } ],
+      "title": "apiserver 5xx by code",
+      "type": "timeseries",
+      "fieldConfig": { "defaults": { "unit": "reqps", "custom": { "fillOpacity": 20 } }, "overrides": [] }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 18 },
+      "id": 9,
+      "targets": [ { "expr": "histogram_quantile(0.99, sum by (le) (rate(apiserver_request_duration_seconds_bucket{job=\"kubernetes\"}[5m])))", "legendFormat": "p99" } ],
+      "title": "apiserver request duration p99",
+      "type": "timeseries",
+      "fieldConfig": { "defaults": { "unit": "s", "custom": { "fillOpacity": 20 } }, "overrides": [] }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 26 },
+      "id": 102,
+      "title": "observability storage self-health (what hid the 2-week outage)",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "description": "1 = VMSingle read-only (disk full). Went unnoticed 2026-11-12..26.",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": { "0": { "text": "writable", "color": "green" }, "1": { "text": "READ-ONLY", "color": "red" } } }
+          ],
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 0.5 } ] }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 27 },
+      "id": 10,
+      "targets": [ { "expr": "max(vm_storage_is_read_only{job=\"vmsingle-victoria-metrics\"})", "legendFormat": "vmsingle" } ],
+      "title": "VMSingle storage mode",
+      "type": "stat"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 9, "x": 6, "y": 27 },
+      "id": 11,
+      "targets": [
+        { "expr": "vm_free_disk_space_bytes{job=\"vmsingle-victoria-metrics\"}", "legendFormat": "free ({{path}})" },
+        { "expr": "vm_free_disk_space_limit_bytes{job=\"vmsingle-victoria-metrics\"}", "legendFormat": "read-only limit" }
+      ],
+      "title": "VMSingle free disk",
+      "type": "timeseries",
+      "fieldConfig": { "defaults": { "unit": "bytes", "custom": { "fillOpacity": 20 } }, "overrides": [] }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 9, "x": 15, "y": 27 },
+      "id": 12,
+      "targets": [
+        { "expr": "vl_free_disk_space_bytes{job=\"vlsingle-victoria-logs\"}", "legendFormat": "VL free" },
+        { "expr": "vl_data_size_bytes{job=\"vlsingle-victoria-logs\",type=\"storage\"}", "legendFormat": "VL data" }
+      ],
+      "title": "VictoriaLogs storage",
+      "type": "timeseries",
+      "fieldConfig": { "defaults": { "unit": "bytes", "custom": { "fillOpacity": 20 } }, "overrides": [] }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 7, "w": 24, "x": 0, "y": 35 },
+      "id": 13,
+      "targets": [ { "expr": "sum(up) by (job)", "legendFormat": "{{job}}" } ],
+      "title": "scrape health: up targets per job",
+      "type": "timeseries",
+      "fieldConfig": { "defaults": { "custom": { "fillOpacity": 20 } }, "overrides": [] }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 42 },
+      "id": 103,
+      "title": "host disk / load (storage-2 backs vmpool1 = etcd + VM + VL)",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 43 },
+      "id": 14,
+      "targets": [ { "expr": "rate(node_disk_io_time_seconds_total{job=~\"storage-2-host|storage-host\"}[5m])", "legendFormat": "{{job}} {{device}}" } ],
+      "title": "disk busy fraction (1.0 = saturated)",
+      "type": "timeseries",
+      "fieldConfig": { "defaults": { "unit": "percentunit", "max": 1, "custom": { "fillOpacity": 20 } }, "overrides": [] }
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 43 },
+      "id": 15,
+      "targets": [
+        { "expr": "node_load1{job=~\"storage-2-host|storage-host\"}", "legendFormat": "{{job}} load1" },
+        { "expr": "node_load15{job=~\"storage-2-host|storage-host\"}", "legendFormat": "{{job}} load15" }
+      ],
+      "title": "host load",
+      "type": "timeseries",
+      "fieldConfig": { "defaults": { "custom": { "fillOpacity": 20 } }, "overrides": [] }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 51 },
+      "id": 104,
+      "title": "workload stability (restarts after etcd stalls)",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "${datasource}" },
+      "gridPos": { "h": 8, "w": 24, "x": 0, "y": 52 },
+      "id": 16,
+      "targets": [ { "expr": "topk(10, increase(kube_pod_container_status_restarts_total{job=\"kube-state-metrics\"}[1h]))", "legendFormat": "{{namespace}}/{{pod}}" } ],
+      "title": "container restarts (top 10, 1h)",
+      "type": "timeseries",
+      "fieldConfig": { "defaults": { "custom": { "fillOpacity": 20 } }, "overrides": [] }
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": ["incidents", "etcd"],
+  "templating": {
+    "list": [
+      {
+        "name": "datasource",
+        "label": "Datasource",
+        "type": "datasource",
+        "query": "prometheus",
+        "current": {},
+        "hide": 0,
+        "includeAll": false
+      }
+    ]
+  },
+  "time": { "from": "now-3h", "to": "now" },
+  "timezone": "browser",
+  "title": "Incidents",
+  "uid": "incidents",
+  "version": 1
+}

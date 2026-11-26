@@ -63,6 +63,12 @@ configMapGenerator:
       - dashboards/local/storage-drive-stuff.json
       - dashboards/local/storage-io-statistics.json
       - dashboards/local/storage-2-hosts-metrics.json
+  - name: incident-dashboards
+    files:
+      ***REMOVED*** Recurring-incident overview (etcd leader-loss bursts, apiserver stress,
+      ***REMOVED*** storage self-health, host disks, restarts) — built 2026-11-26 after the
+      ***REMOVED*** VMSingle disk-full incident. Query-only; job labels verified live.
+      - dashboards/incidents/incidents.json
 
 ***REMOVED*** configMapGenerator can't set per-entry annotations, so patch the stable
 ***REMOVED*** (unhashed) ConfigMap names to drive the Grafana `grafana_folder` annotation.
@@ -107,3 +113,13 @@ patches:
         name: ops-dashboards
         annotations:
           grafana_folder: Local
+  - target:
+      kind: ConfigMap
+      name: incident-dashboards
+    patch: |-
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: incident-dashboards
+        annotations:
+          grafana_folder: Incidents
