@@ -17,9 +17,8 @@ resources:
 generators:
   - ksops.yaml
 
-generatorOptions:
-  disableNameSuffixHash: true
-
+***REMOVED*** Single block (dup generatorOptions = YAML last-wins silently discards the
+***REMOVED*** earlier one — bitten this repo 2026-09-25 in argo/argo-cd/values.yaml).
 generatorOptions:
   labels:
     grafana_dashboard: "1"
